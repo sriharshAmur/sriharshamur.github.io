@@ -47,6 +47,7 @@ Workers Paid and keeps each application in its own Worker.
 | `sriharsh.com` | This static Astro portfolio |
 | `www.sriharsh.com` | Permanent redirect to HTTPS on the apex, preserving path and query |
 | `sriharsh.com/long-exposure` and its subpaths | Timeline app, served by its own Worker route |
+| `sriharsh.com/munch` and its subpaths | Food history app, served by its own Worker route |
 | Separate subdomain, to be confirmed | Finance app, protected by Cloudflare Access |
 
 `wrangler.jsonc` binds the portfolio to `sriharsh.com/*` and

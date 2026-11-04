@@ -7,7 +7,7 @@ export default {
       url.hostname = "sriharsh.com";
       url.protocol = "https:";
       response = Response.redirect(url.toString(), 308);
-    } else if (url.pathname.startsWith("/long-exposure")) {
+    } else if (url.pathname.startsWith("/long-exposure") || url.pathname.startsWith("/munch")) {
       // The more specific Cloudflare route belongs to the timeline Worker.
       // Fail closed if that route is ever removed, rather than serving portfolio content.
       response = new Response("Not found", { status: 404 });

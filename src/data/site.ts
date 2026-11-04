@@ -117,6 +117,10 @@ export type Work = {
   tools: string[];
   cover: { type: "image"; src: string; alt: string } | { type: "mock"; variant: "viz" | "jobs" | "chat" };
   tint: string;
+  /** Shown large on the home page, with a direct link to the live app. */
+  featured?: boolean;
+  /** Line under the case study's cover image. */
+  coverNote?: string;
   links: { label: string; href: string }[];
   problem: string;
   approach: string[];
@@ -126,15 +130,56 @@ export type Work = {
 
 export const work: Work[] = [
   {
+    slug: "munch",
+    title: "Munch",
+    kind: "Personal project",
+    year: "2026",
+    featured: true,
+    tagline: "A year of dinners, read at a glance.",
+    summary:
+      "Your Thuisbezorgd order history, read back in your browser: when you get hungry, the places you keep going back to, what an order really costs, and what you'll probably order next.",
+    tools: ["TypeScript", "Bun", "React 19", "Vite", "TanStack Router", "Motion", "Tailwind", "Cloudflare Workers"],
+    cover: {
+      type: "image",
+      src: "/img/work/munch/hero.jpg",
+      alt: "Munch's home page: a row of story rings above the headline “87 orders since November 2025”",
+    },
+    coverNote: "Screenshots use a fictional demo person, with made-up orders from made-up restaurants.",
+    tint: "#21161f",
+    links: [
+      { label: "Open Munch", href: "/munch/" },
+      { label: "Source on GitHub", href: "https://github.com/sriharshAmur/munch" },
+    ],
+    problem:
+      "A delivery app knows a lot about your evenings: the nights you couldn't face cooking, the place you quietly stopped ordering from, how much of each order went on fees. All it gives you back is a list of receipts, newest first, and you can't read a list of receipts as a year.",
+    approach: [
+      "A small Bun command-line tool fetches your own order history with your own signed-in session. It makes one polite request at a time and keeps the session in memory, never on disk.",
+      "Raw responses are saved first and normalised into one JSON file afterwards, so a parser fix never needs a refetch. Names, phone numbers and street addresses are dropped on the way.",
+      "The web app opens that file in your browser, and nothing is uploaded. One TypeScript core holds the schema, the analysis and the predictions, shared by the command line, the tests and the page.",
+      "Story rings play your year, then each month. Question cards answer one thing each in large type, with small hand-built charts underneath, and every bar opens the orders behind it.",
+      "Findings are pinned up like kitchen tickets, shown only when your history supports them, next to an order type (night owl, regular, explorer) and a guess at your next order with its honest hit rate.",
+    ],
+    outcome:
+      "A live demo with a made-up person's year of orders, and a tool I run on my own. Thuisbezorgd keeps about a year of history, so Munch is designed around a year: weeks rather than months, and months as stories.",
+    gallery: [
+      { src: "/img/work/munch/story.jpg", alt: "A story slide naming the demo person's number one restaurant of the year", caption: "Your year plays as a story, then each month gets one of its own." },
+      { src: "/img/work/munch/cards.jpg", alt: "Cards answering when the demo person orders and where from", caption: "One question per card, answered in large type with the evidence underneath." },
+      { src: "/img/work/munch/noticed.jpg", alt: "Small findings shown as kitchen tickets hanging from a rail", caption: "Things we noticed, pinned up like tickets in a kitchen." },
+      { src: "/img/work/munch/places.jpg", alt: "A table of restaurants with a status and a year of activity for each", caption: "Every restaurant gets a status, a year of activity and a page of its own." },
+    ],
+  },
+  {
     slug: "long-exposure",
     title: "Long Exposure",
     kind: "Personal project",
     year: "2026",
+    featured: true,
     tagline: "Every place your phone remembers, in one picture.",
     summary:
       "A browser-only story built from a Google Maps Timeline export: a decade of location history glowing on a night map, with the years unfolding around it.",
     tools: ["JavaScript", "Web Workers", "MapLibre GL", "SVG", "Cloudflare Workers"],
     cover: { type: "image", src: "/img/work/long-exposure/hero.jpg", alt: "Years of location history glowing as points on a dark world map" },
+    coverNote: "Screenshots use a fictional demo person, with made-up location history.",
     tint: "#1b2142",
     links: [
       { label: "Open Long Exposure", href: "/long-exposure/" },

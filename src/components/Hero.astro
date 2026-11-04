@@ -87,7 +87,7 @@ let n = 0;
     gap: 0.6rem;
     font-size: 0.95rem;
     color: var(--ink-2);
-    animation: rise 900ms var(--ease-out) 900ms backwards;
+    animation: rise 800ms var(--ease-out) 650ms backwards;
   }
   .hero__live {
     position: relative;
@@ -138,10 +138,10 @@ let n = 0;
   .ch {
     display: inline-block;
     font-stretch: var(--wd, 100%);
+    /* --wg is eased every frame by site.ts while the pointer is near. */
     font-weight: var(--wg, 850);
-    transition: font-stretch 500ms var(--ease-out), font-weight 500ms var(--ease-out);
-    animation: stretch-in 1400ms var(--ease-out) backwards;
-    animation-delay: calc(120ms + var(--i) * 45ms);
+    animation: stretch-in 1300ms var(--ease-out) backwards;
+    animation-delay: calc(100ms + var(--i) * 40ms);
   }
   .hero__space {
     display: inline-block;
@@ -152,12 +152,10 @@ let n = 0;
       opacity: 0;
       font-stretch: 50%;
       font-weight: 300;
-      transform: translateY(0.35em);
-      filter: blur(10px);
+      transform: translateY(0.3em);
     }
-    40% {
+    35% {
       opacity: 1;
-      filter: blur(0);
     }
     100% {
       font-stretch: 100%;
@@ -186,21 +184,21 @@ let n = 0;
   .hero__photo {
     position: absolute;
     inset: 0;
+    /* --px and --py are eased by site.ts; a transition here would fight it. */
     will-change: transform;
     transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
-    transition: transform 900ms var(--ease-out);
   }
   .hero__disc {
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--marigold) 70%, #fff) 0%, var(--marigold) 55%);
-    animation: disc-in 1200ms var(--ease-out) 250ms backwards;
+    animation: disc-in 1100ms var(--ease-out) 200ms backwards;
   }
   .hero__photo {
     width: 100%;
     height: 100%;
     object-fit: contain;
     clip-path: inset(-20% 0 0 0 round 0 0 50% 50%);
-    animation: photo-in 1100ms var(--ease-out) 520ms backwards;
+    animation: photo-in 900ms var(--ease-out) 420ms backwards;
   }
   @keyframes disc-in {
     from {
@@ -211,8 +209,7 @@ let n = 0;
   @keyframes photo-in {
     from {
       opacity: 0;
-      transform: translateY(14%);
-      filter: blur(12px);
+      transform: translateY(12%);
     }
   }
 
@@ -233,20 +230,19 @@ let n = 0;
     font-size: clamp(1.2rem, 1.6vw, 1.5rem);
     line-height: 1.45;
     max-width: 34ch;
-    animation: rise 900ms var(--ease-out) 1000ms backwards;
+    animation: rise 800ms var(--ease-out) 750ms backwards;
   }
   .hero__cta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    animation: rise 900ms var(--ease-out) 1120ms backwards;
+    animation: rise 800ms var(--ease-out) 850ms backwards;
   }
 
   @keyframes rise {
     from {
       opacity: 0;
       transform: translateY(14px);
-      filter: blur(6px);
     }
   }
   @keyframes ping {

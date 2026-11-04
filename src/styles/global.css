@@ -35,6 +35,25 @@
   color-scheme: light;
 }
 
+/* Big screens: widen the page and scale the whole type ramp with it, so a
+   2560px display gets a composed page rather than a narrow column. */
+@media (min-width: 1800px) {
+  :root {
+    --max: 90rem;
+  }
+  html {
+    font-size: 106.25%;
+  }
+}
+@media (min-width: 2300px) {
+  :root {
+    --max: 96rem;
+  }
+  html {
+    font-size: 118.75%;
+  }
+}
+
 :root.dark {
   --paper: #0f1226;
   --paper-2: #171b36;
@@ -205,9 +224,14 @@ p {
   font-stretch: 95%;
   font-size: 1rem;
   text-decoration: none;
+  /* translate is the magnetic pull (site.ts), transform is the press. They compose. */
+  translate: var(--mx, 0px) var(--my, 0px);
   transition: transform var(--t-press) var(--ease-out), background-color var(--t-quick) var(--ease-out),
     box-shadow var(--t-base) var(--ease-out);
-  will-change: transform;
+}
+.btn--small {
+  padding: 0.6em 1.05em;
+  font-size: 0.95rem;
 }
 .btn:active {
   transform: scale(0.97);
@@ -270,14 +294,31 @@ p {
 }
 
 /* ------------------------------------------------------------------
+   Pointer tilt (site.ts writes --rx, --ry, --lift, --gx, --gy).
+   No transition: the values are already smoothed every frame.
+   ------------------------------------------------------------------ */
+[data-tilt] {
+  transform: perspective(1400px) rotateX(calc(var(--rx, 0) * 1deg)) rotateY(calc(var(--ry, 0) * 1deg))
+    scale(calc(1 + var(--lift, 0) * 0.012));
+  transform-origin: 50% 50%;
+}
+[data-tilt] img {
+  transform: scale(calc(1 + var(--lift, 0) * 0.03)) translate(calc(var(--ry, 0) * -1.5px), calc(var(--rx, 0) * 1.5px));
+}
+
+/* ------------------------------------------------------------------
    Scroll reveal. Small distances, quick, no bounce.
    ------------------------------------------------------------------ */
 .js [data-reveal] {
   opacity: 0;
-  transform: translateY(18px);
-  filter: blur(6px);
-  transition: opacity 700ms var(--ease-out), transform 900ms var(--ease-out), filter 700ms var(--ease-out);
-  transition-delay: calc(var(--i, 0) * 70ms);
+  transform: translateY(16px);
+  filter: blur(4px);
+  transition: opacity 600ms var(--ease-out), transform 800ms var(--ease-out), filter 600ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+.js figure[data-reveal],
+.js [data-reveal]:has(> img) {
+  filter: none;
 }
 .js [data-reveal].is-in {
   opacity: 1;
@@ -332,6 +373,12 @@ p {
     opacity: 1;
     transform: none;
     filter: none;
+  }
+  [data-tilt], [data-tilt] img {
+    transform: none !important;
+  }
+  .btn {
+    translate: none !important;
   }
   .stretch {
     font-stretch: 100%;

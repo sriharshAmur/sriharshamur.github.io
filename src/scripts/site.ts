@@ -1,5 +1,13 @@
 // All behaviour for the site. Small, dependency-free, and every effect
 // checks for reduced motion and fine pointers before it moves anything.
+//
+// Two rules keep the motion smooth:
+// 1. Anything that follows the pointer or the scroll is smoothed here, in one
+//    requestAnimationFrame loop per element, and written as CSS variables that
+//    feed transform and opacity. Those properties never also get a CSS
+//    transition, because a transition restarted on every frame stutters.
+// 2. Each frame reads layout first and writes styles after, so the browser
+//    lays the page out once per frame rather than once per element.
 export {};
 
 const root = document.documentElement;
@@ -8,7 +16,48 @@ const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
 const $ = <T extends Element = HTMLElement>(sel: string, el: ParentNode = document) => el.querySelector<T>(sel);
 const $$ = <T extends Element = HTMLElement>(sel: string, el: ParentNode = document) => [...el.querySelectorAll<T>(sel)];
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const canFollowPointer = () => finePointer.matches && !reduced.matches;
 root.classList.add("js");
+
+/**
+ * Eases a set of numbers towards their targets, frame-rate independent.
+ * `speed` is how quickly the gap closes per second (higher is snappier).
+ * The loop only runs while something is still moving.
+ */
+function smooth<K extends string>(initial: Record<K, number>, apply: (v: Record<K, number>) => void, speed = 11) {
+  const value = { ...initial };
+  const target = { ...initial };
+  let raf = 0;
+  let last = 0;
+  const step = (now: number) => {
+    const dt = last ? Math.min(64, now - last) : 16.7;
+    last = now;
+    const k = 1 - Math.exp((-speed * dt) / 1000);
+    let moving = false;
+    for (const key in target) {
+      const gap = target[key] - value[key];
+      if (Math.abs(gap) < 0.002) value[key] = target[key];
+      else {
+        value[key] += gap * k;
+        moving = true;
+      }
+    }
+    apply(value);
+    if (moving) raf = requestAnimationFrame(step);
+    else raf = last = 0;
+  };
+  return {
+    to(next: Partial<Record<K, number>>) {
+      Object.assign(target, next);
+      if (!raf) raf = requestAnimationFrame(step);
+    },
+    jump(next: Partial<Record<K, number>>) {
+      Object.assign(target, next);
+      Object.assign(value, next);
+      apply(value);
+    },
+  };
+}
 
 /* ---------------------------------------------------------------- Theme */
 function setTheme(dark: boolean) {
@@ -39,7 +88,7 @@ $("[data-theme-toggle]")?.addEventListener("click", (e) => {
     .then(() => {
       root.animate(
         { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-        { duration: 650, easing: "cubic-bezier(0.77, 0, 0.175, 1)", pseudoElement: "::view-transition-new(root)" }
+        { duration: 600, easing: "cubic-bezier(0.65, 0, 0.35, 1)", pseudoElement: "::view-transition-new(root)" }
       );
     })
     .catch(() => {});
@@ -56,7 +105,7 @@ if (clocks.length) {
     const now = new Date();
     const text = fmt.format(now);
     clocks.forEach((c) => {
-      c.textContent = text;
+      if (c.textContent !== text) c.textContent = text;
       c.setAttribute("datetime", now.toISOString());
     });
   };
@@ -96,9 +145,30 @@ const io = new IntersectionObserver(
       }
     }
   },
-  { rootMargin: "0px 0px -12% 0px", threshold: 0.15 }
+  { rootMargin: "0px 0px -10% 0px", threshold: 0.12 }
 );
 $$("[data-reveal], [data-stretch]").forEach((el) => io.observe(el));
+
+/* ---------------------------------------------------------------- Scroll: one read pass, then one write pass */
+// Each effect measures in its read step and returns the writes to make.
+type ScrollEffect = () => (() => void) | void;
+const scrollEffects: ScrollEffect[] = [];
+let ticking = false;
+function onScroll() {
+  ticking = false;
+  const writes = scrollEffects.map((read) => read());
+  writes.forEach((write) => write && write());
+}
+addEventListener(
+  "scroll",
+  () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(onScroll);
+    }
+  },
+  { passive: true }
+);
 
 /* ---------------------------------------------------------------- Nav: hide on scroll down, sliding pill */
 const nav = $("[data-nav]");
@@ -121,6 +191,7 @@ function movePill(target: HTMLElement | null, animate = true) {
   if (!animate) requestAnimationFrame(() => pill.classList.remove("no-anim"));
 }
 
+const activeLink = () => links.find((l) => l.classList.contains("is-active")) ?? null;
 function setActive(key: string | null) {
   let found: HTMLElement | null = null;
   links.forEach((l) => {
@@ -133,175 +204,292 @@ function setActive(key: string | null) {
   movePill(found);
 }
 
-const initial = links.find((l) => l.classList.contains("is-active")) ?? null;
-movePill(initial, false);
-addEventListener("resize", () => movePill(links.find((l) => l.classList.contains("is-active")) ?? null, false));
-document.fonts?.ready.then(() => movePill(links.find((l) => l.classList.contains("is-active")) ?? null, false));
+movePill(activeLink(), false);
+document.fonts?.ready.then(() => movePill(activeLink(), false));
 
 // Scrollspy for in-page sections on the home page.
 const spySections = links
-  .map((l) => ({ key: l.dataset.key!, el: l.hash ? document.getElementById(l.hash.slice(1)) : null }))
-  .filter((s) => s.el && l_isLocal(s.key));
-function l_isLocal(key: string) {
-  const l = links.find((x) => x.dataset.key === key);
-  return !!l && l.getAttribute("href")!.startsWith("#");
-}
+  .filter((l) => l.getAttribute("href")!.startsWith("#"))
+  .map((l) => ({ key: l.dataset.key!, el: document.getElementById(l.hash.slice(1)) }))
+  .filter((s): s is { key: string; el: HTMLElement } => !!s.el);
 
 let lastY = scrollY;
-let ticking = false;
-function onScroll() {
+scrollEffects.push(() => {
   const y = scrollY;
-  if (nav) {
-    const down = y > lastY && y > 240;
-    nav.classList.toggle("is-hidden", down && !nav.matches(":focus-within"));
-  }
+  const hide = y > lastY && y > 240;
   lastY = y;
-
+  let current: string | null = null;
   if (spySections.length) {
     const mid = innerHeight * 0.4;
-    let current: string | null = null;
     for (const s of spySections) {
-      const r = s.el!.getBoundingClientRect();
+      const r = s.el.getBoundingClientRect();
       if (r.top <= mid && r.bottom > mid) current = s.key;
     }
-    if (current !== (links.find((l) => l.classList.contains("is-active"))?.dataset.key ?? null)) setActive(current);
   }
-
-  scrollEffects.forEach((fn) => fn());
-  ticking = false;
-}
-const scrollEffects: Array<() => void> = [];
-addEventListener(
-  "scroll",
-  () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(onScroll);
-    }
-  },
-  { passive: true }
-);
+  return () => {
+    if (nav) nav.classList.toggle("is-hidden", hide && !nav.matches(":focus-within"));
+    if (spySections.length && current !== (activeLink()?.dataset.key ?? null)) setActive(current);
+  };
+});
 
 /* ---------------------------------------------------------------- Hero: letters respond to the pointer */
 const name = $("[data-proximity]");
-if (name && finePointer.matches && !reduced.matches) {
+if (name) {
   const chars = $$(".ch", name);
-  let mx = -9999;
-  let my = -9999;
-  let raf = 0;
-  const update = () => {
-    raf = 0;
-    for (const c of chars) {
+  // Letter centres, relative to the heading. Measured at rest, so the
+  // weights we set never feed back into where we think the letters are.
+  let centres: { x: number; y: number }[] = [];
+  let box: DOMRect | null = null;
+  const measure = () => {
+    box = name.getBoundingClientRect();
+    const b = box;
+    centres = chars.map((c) => {
       const r = c.getBoundingClientRect();
-      const d = Math.hypot(mx - (r.left + r.width / 2), my - (r.top + r.height / 2));
-      const f = clamp(1 - d / 380);
-      const e = f * f * (3 - 2 * f); // smoothstep
-      c.style.setProperty("--wg", `${850 - e * 520}`);
-    }
+      return { x: r.left - b.left + r.width / 2, y: r.top - b.top + r.height / 2 };
+    });
   };
+  const weights = chars.map(() => 850);
+  const targets = chars.map(() => 850);
+  let raf = 0;
+  let last = 0;
+  const step = (now: number) => {
+    const dt = last ? Math.min(64, now - last) : 16.7;
+    last = now;
+    const k = 1 - Math.exp((-12 * dt) / 1000);
+    let moving = false;
+    chars.forEach((c, i) => {
+      const gap = targets[i] - weights[i];
+      if (Math.abs(gap) < 0.5) weights[i] = targets[i];
+      else {
+        weights[i] += gap * k;
+        moving = true;
+      }
+      c.style.setProperty("--wg", weights[i].toFixed(0));
+    });
+    raf = moving ? requestAnimationFrame(step) : (last = 0);
+  };
+  const aim = (mx: number, my: number) => {
+    if (!box) measure();
+    const b = box!;
+    centres.forEach((p, i) => {
+      const d = Math.hypot(mx - (b.left + p.x), my - (b.top + p.y));
+      const f = clamp(1 - d / 380);
+      targets[i] = 850 - f * f * (3 - 2 * f) * 520; // smoothstep
+    });
+    if (!raf) raf = requestAnimationFrame(step);
+  };
+  const forget = () => {
+    box = null;
+  };
+  addEventListener("scroll", forget, { passive: true });
+  addEventListener("resize", () => {
+    box = null;
+    centres = [];
+  });
+
   // Wait for the entrance to finish before taking over the letters.
   setTimeout(() => {
+    name.addEventListener("pointerenter", () => {
+      if (!centres.length) measure();
+    });
     name.addEventListener("pointermove", (ev) => {
-      if (reduced.matches || !finePointer.matches) return;
-      mx = ev.clientX;
-      my = ev.clientY;
-      if (!raf) raf = requestAnimationFrame(update);
+      if (!canFollowPointer()) return;
+      if (!centres.length) measure();
+      aim(ev.clientX, ev.clientY);
     });
     name.addEventListener("pointerleave", () => {
-      mx = my = -9999;
-      if (!raf) raf = requestAnimationFrame(update);
+      targets.fill(850);
+      if (!raf) raf = requestAnimationFrame(step);
     });
-  }, 1700);
+  }, 1600);
 }
 
 /* ---------------------------------------------------------------- Hero: portrait depth */
 const parallax = $("[data-parallax]");
-if (parallax && finePointer.matches && !reduced.matches) {
-  const layers = $$("[data-depth]", parallax);
-  addEventListener("pointermove", (ev) => {
-    if (reduced.matches || !finePointer.matches || scrollY > innerHeight) return;
-    const nx = ev.clientX / innerWidth - 0.5;
-    const ny = ev.clientY / innerHeight - 0.5;
-    layers.forEach((l) => {
-      const d = parseFloat(l.dataset.depth!);
-      l.style.setProperty("--px", `${nx * 28 * d}px`);
-      l.style.setProperty("--py", `${ny * 22 * d}px`);
-    });
-  });
+if (parallax) {
+  const layers = $$("[data-depth]", parallax).map((el) => ({ el, d: parseFloat(el.dataset.depth!) }));
+  const depth = smooth({ x: 0, y: 0 }, ({ x, y }) => {
+    for (const l of layers) {
+      l.el.style.setProperty("--px", `${(x * 28 * l.d).toFixed(2)}px`);
+      l.el.style.setProperty("--py", `${(y * 22 * l.d).toFixed(2)}px`);
+    }
+  }, 5);
+  addEventListener(
+    "pointermove",
+    (ev) => {
+      if (!canFollowPointer() || scrollY > innerHeight) return;
+      depth.to({ x: ev.clientX / innerWidth - 0.5, y: ev.clientY / innerHeight - 0.5 });
+    },
+    { passive: true }
+  );
+  document.addEventListener("pointerleave", () => depth.to({ x: 0, y: 0 }));
 }
 
-/* ---------------------------------------------------------------- Work: featured card settles as it arrives */
-const feat = $("[data-feature-media]");
-if (feat && !reduced.matches) {
-  const run = () => {
+/* ---------------------------------------------------------------- Work: featured covers settle as they arrive */
+$$("[data-feature-media]").forEach((feat) => {
+  scrollEffects.push(() => {
     if (reduced.matches) {
-      feat.style.removeProperty("--s");
-      feat.style.removeProperty("--r");
-      return;
+      return () => {
+        feat.style.removeProperty("--s");
+        feat.style.removeProperty("--r");
+      };
     }
     const r = feat.getBoundingClientRect();
+    if (r.bottom < -200 || r.top > innerHeight + 200) return;
     const p = clamp((innerHeight - r.top) / (innerHeight * 0.85));
     const e = 1 - Math.pow(1 - p, 3);
-    feat.style.setProperty("--s", `${0.86 + e * 0.14}`);
-    feat.style.setProperty("--r", `${(1 - e) * -3}deg`);
-  };
-  scrollEffects.push(run);
-  run();
-}
+    return () => {
+      feat.style.setProperty("--s", (0.88 + e * 0.12).toFixed(4));
+      feat.style.setProperty("--r", `${((1 - e) * -2.5).toFixed(3)}deg`);
+    };
+  });
+});
 
-/* ---------------------------------------------------------------- Work: preview that follows the cursor */
+/* ---------------------------------------------------------------- Lists: a preview that follows the cursor */
+// The cover trails the pointer, leans into the direction it travels, and
+// slides up or down to the next project as you move between rows.
 const float = $("[data-float]");
 const rows = $$<HTMLAnchorElement>("[data-row]");
-if (float && rows.length && finePointer.matches) {
+if (float && rows.length) {
   const slides = $$("[data-slide]", float);
-  let tx = 0, ty = 0, x = 0, y = 0, vx = 0;
+  let tx = 0, ty = 0, x = 0, y = 0, rot = 0;
   let raf = 0;
-  let active = -1;
-  const loop = () => {
+  let last = 0;
+  let visible = false;
+  let hideTimer = 0;
+  let hiddenAt = 0;
+  let current = -1;
+  let half = 0;
+  const measure = () => (half = float.offsetWidth / 2);
+  addEventListener("resize", () => (half = 0));
+
+  const write = () => {
+    float.style.setProperty("--fx", `${x.toFixed(1)}px`);
+    float.style.setProperty("--fy", `${y.toFixed(1)}px`);
+    float.style.setProperty("--rot", `${rot.toFixed(2)}deg`);
+  };
+  const loop = (now: number) => {
+    const dt = last ? Math.min(64, now - last) : 16.7;
+    last = now;
+    const k = 1 - Math.exp((-10 * dt) / 1000);
     const px = x;
-    x += (tx - x) * 0.16;
-    y += (ty - y) * 0.16;
-    vx = x - px;
-    float.style.setProperty("--fx", `${x}px`);
-    float.style.setProperty("--fy", `${y}px`);
-    float.style.setProperty("--rot", `${clamp(vx * 0.35, -8, 8)}deg`);
-    raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.3 ? requestAnimationFrame(loop) : 0;
+    x += (tx - x) * k;
+    y += (ty - y) * k;
+    // Lean by horizontal speed (pixels per 60fps frame), eased so it never snaps.
+    const lean = clamp(((x - px) / dt) * 16.7 * 0.3, -7, 7);
+    rot += (lean - rot) * (1 - Math.exp((-14 * dt) / 1000));
+    write();
+    const settled = Math.abs(tx - x) + Math.abs(ty - y) < 0.3 && Math.abs(rot) < 0.02;
+    if (settled) {
+      rot = 0;
+      write();
+      raf = last = 0;
+    } else raf = requestAnimationFrame(loop);
   };
   const show = (i: number) => {
+    if (i === current) return;
     slides.forEach((s, k) => {
       s.classList.toggle("is-current", k === i);
       s.classList.toggle("is-past", k < i);
     });
-    active = i;
+    current = i;
   };
+  const target = (ev: PointerEvent) => {
+    if (!half) measure();
+    tx = clamp(ev.clientX + 40, half + 16, innerWidth - half - 16);
+    ty = clamp(ev.clientY, half * 0.625 + 16, innerHeight - half * 0.625 - 16);
+  };
+  const hide = () => {
+    visible = false;
+    hiddenAt = performance.now();
+    float.classList.remove("is-on", "is-hot");
+  };
+
   rows.forEach((row) => {
     const i = Number(row.dataset.row);
     row.addEventListener("pointerenter", (ev) => {
-      if (reduced.matches || !finePointer.matches) return;
-      if (active === -1 || !float.classList.contains("is-on")) {
-        x = tx = ev.clientX;
-        y = ty = ev.clientY;
-        float.style.setProperty("--fx", `${x}px`);
-        float.style.setProperty("--fy", `${y}px`);
+      if (!canFollowPointer()) return;
+      clearTimeout(hideTimer);
+      target(ev);
+      // Only jump to the cursor when the preview has fully faded out;
+      // moving between rows keeps it gliding from where it is.
+      if (!visible && performance.now() - hiddenAt > 250) {
+        x = tx;
+        y = ty;
+        rot = 0;
+        write();
       }
       show(i);
-      float.classList.add("is-on");
+      visible = true;
+      float.classList.add("is-on", "is-hot");
       row.classList.add("is-hot");
+      if (!raf) raf = requestAnimationFrame(loop);
     });
     row.addEventListener("pointermove", (ev) => {
-      if (reduced.matches || !finePointer.matches) return;
-      tx = clamp(ev.clientX + 40, 190, innerWidth - 190);
-      ty = clamp(ev.clientY, 130, innerHeight - 130);
+      if (!canFollowPointer()) return;
+      target(ev);
       if (!raf) raf = requestAnimationFrame(loop);
     });
     row.addEventListener("pointerleave", () => {
-      float.classList.remove("is-on");
       row.classList.remove("is-hot");
+      // Wait a moment: if the pointer lands on the next row, stay visible.
+      clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(hide, 90);
     });
   });
-  // Keep the cover hover animations alive on the floating preview too.
-  rows.forEach((row) => row.addEventListener("pointerenter", () => float.classList.add("is-hot")));
+  addEventListener("pageshow", hide);
+  reduced.addEventListener("change", hide);
 }
+
+/* ---------------------------------------------------------------- Cards and images lean towards the pointer */
+// [data-tilt="5"] sets the most it leans, in degrees. The pointer is tracked
+// over the closest [data-tilt-scope] (the whole card), or the element itself.
+$$("[data-tilt]").forEach((el) => {
+  const max = parseFloat(el.dataset.tilt || "5");
+  const scope = el.closest<HTMLElement>("[data-tilt-scope]") ?? el;
+  let box: DOMRect | null = null;
+  const tilt = smooth({ rx: 0, ry: 0, lift: 0, gx: 50, gy: 0 }, (v) => {
+    el.style.setProperty("--rx", v.rx.toFixed(3));
+    el.style.setProperty("--ry", v.ry.toFixed(3));
+    el.style.setProperty("--lift", v.lift.toFixed(3));
+    el.style.setProperty("--gx", `${v.gx.toFixed(1)}%`);
+    el.style.setProperty("--gy", `${v.gy.toFixed(1)}%`);
+  }, 9);
+  const forget = () => (box = null);
+  scope.addEventListener("pointerenter", forget);
+  addEventListener("scroll", forget, { passive: true });
+  scope.addEventListener("pointermove", (ev) => {
+    if (!canFollowPointer()) return;
+    box ??= el.getBoundingClientRect();
+    const nx = clamp((ev.clientX - box.left) / box.width - 0.5, -0.7, 0.7);
+    const ny = clamp((ev.clientY - box.top) / box.height - 0.5, -0.7, 0.7);
+    tilt.to({ ry: nx * max, rx: -ny * max * 0.8, lift: 1, gx: (nx + 0.5) * 100, gy: (ny + 0.5) * 100 });
+  });
+  scope.addEventListener("pointerleave", () => tilt.to({ rx: 0, ry: 0, lift: 0 }));
+  reduced.addEventListener("change", () => tilt.jump({ rx: 0, ry: 0, lift: 0 }));
+});
+
+/* ---------------------------------------------------------------- Buttons lean towards the pointer */
+$$(".btn, [data-magnetic]").forEach((el) => {
+  let box: DOMRect | null = null;
+  const pull = smooth({ x: 0, y: 0 }, ({ x, y }) => {
+    el.style.setProperty("--mx", `${x.toFixed(2)}px`);
+    el.style.setProperty("--my", `${y.toFixed(2)}px`);
+  }, 14);
+  el.addEventListener("pointerenter", () => (box = el.getBoundingClientRect()));
+  el.addEventListener("pointermove", (ev) => {
+    if (!canFollowPointer()) return;
+    // Measured on enter, before the button has moved, so it never chases itself.
+    box ??= el.getBoundingClientRect();
+    const dx = ev.clientX - (box.left + box.width / 2);
+    const dy = ev.clientY - (box.top + box.height / 2);
+    pull.to({ x: clamp(dx * 0.22, -7, 7), y: clamp(dy * 0.3, -5, 5) });
+  });
+  el.addEventListener("pointerleave", () => {
+    box = null;
+    pull.to({ x: 0, y: 0 });
+  });
+});
 
 /* ---------------------------------------------------------------- Stack: explode on scroll, pick a layer */
 const stackEl = $("[data-stack]");
@@ -337,14 +525,15 @@ if (stackEl) {
   }
   select(1);
 
-  const run = () => {
-    if (reduced.matches) return iso.style.setProperty("--p", "1");
+  // The scroll sets a target; the layers ease towards it, so a flick of the
+  // wheel opens the stack smoothly instead of in steps.
+  const spread = smooth({ p: 0 }, ({ p }) => iso.style.setProperty("--p", p.toFixed(4)), 8);
+  scrollEffects.push(() => {
+    if (reduced.matches) return () => spread.jump({ p: 1 });
     const r = iso.getBoundingClientRect();
     const p = clamp((innerHeight - r.top) / (innerHeight * 0.9));
-    iso.style.setProperty("--p", (1 - Math.pow(1 - p, 2)).toFixed(3));
-  };
-  scrollEffects.push(run);
-  run();
+    return () => spread.to({ p: 1 - Math.pow(1 - p, 2) });
+  });
 }
 
 /* ---------------------------------------------------------------- Route: the line draws as you read */
@@ -352,18 +541,17 @@ const route = $("[data-route]");
 if (route) {
   const fill = $("[data-route-fill]", route)!;
   const stops = $$("[data-stop]", route);
-  const run = () => {
+  scrollEffects.push(() => {
     const r = route.getBoundingClientRect();
+    if (r.bottom < -innerHeight || r.top > innerHeight * 2) return;
     const line = innerHeight * 0.62;
     const p = reduced.matches ? 1 : clamp((line - r.top) / r.height);
-    fill.style.setProperty("--progress", p.toFixed(4));
-    stops.forEach((s) => {
-      const top = s.getBoundingClientRect().top + 12;
-      s.classList.toggle("is-past", reduced.matches || top < line);
-    });
-  };
-  scrollEffects.push(run);
-  run();
+    const past = stops.map((s) => reduced.matches || s.getBoundingClientRect().top + 12 < line);
+    return () => {
+      fill.style.setProperty("--progress", p.toFixed(4));
+      stops.forEach((s, i) => s.classList.toggle("is-past", past[i]));
+    };
+  });
 }
 
 /* ---------------------------------------------------------------- CV: print */
@@ -375,16 +563,15 @@ reduced.addEventListener("change", () => {
     el.style.removeProperty("--px");
     el.style.removeProperty("--py");
   });
-  float?.classList.remove("is-on");
   onScroll();
 });
 addEventListener("resize", () => {
   lastY = scrollY;
+  movePill(activeLink(), false);
   onScroll();
 });
 addEventListener("pageshow", () => {
   nav?.classList.remove("is-hidden");
-  float?.classList.remove("is-on");
 });
 
 onScroll();

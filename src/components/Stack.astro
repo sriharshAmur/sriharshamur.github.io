@@ -18,7 +18,9 @@ const n = stack.length;
         {
           stack.map((s, i) => (
             <div class="slab" data-slab={i} style={`--i:${n - 1 - i}`}>
-              <span class="slab__label">{s.layer}</span>
+              <div class="slab__body">
+                <span class="slab__label">{s.layer}</span>
+              </div>
             </div>
           ))
         }
@@ -98,20 +100,29 @@ const n = stack.length;
       transform: translateY(28%) rotateX(58deg) rotateZ(-42deg);
     }
   }
+  /* Two layers on purpose: the outer one follows the scroll (--p, eased in
+     site.ts, no transition), the inner one lifts when picked (transitioned). */
   .slab {
-    --lift: 0px;
     --gap: calc(10px + var(--p) * 58px);
     position: absolute;
     inset: 22%;
     border-radius: 18px;
     transform-style: preserve-3d;
-    transform: translateZ(calc(var(--i) * var(--gap) + var(--lift)));
-    transition: transform 600ms var(--ease-out), filter 400ms var(--ease-out), opacity 400ms var(--ease-out);
+    transform: translateZ(calc(var(--i) * var(--gap)));
+    transition: filter 400ms var(--ease-out), opacity 400ms var(--ease-out);
+  }
+  .slab__body {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transform-style: preserve-3d;
+    transform: translateZ(var(--lift, 0px));
+    transition: transform 450ms var(--ease-out);
     display: flex;
     align-items: flex-end;
     padding: 9%;
   }
-  .slab::before {
+  .slab__body::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -119,7 +130,7 @@ const n = stack.length;
     transform: translateZ(-9px);
     background: var(--edge);
   }
-  .slab::after {
+  .slab__body::after {
     content: "";
     position: absolute;
     inset: 0;

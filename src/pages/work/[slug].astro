@@ -45,7 +45,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
       <Cover item={item} vt eager />
       <p class="case__caption muted">
         {item.cover.type === "image"
-          ? "Screenshots use a fictional demo person, with made-up location history."
+          ? item.coverNote ?? "Project screenshot."
           : "Product illustration, rather than a screenshot of the application."}
       </p>
     </div>

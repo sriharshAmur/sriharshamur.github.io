@@ -1,7 +1,11 @@
 ---
 import { work } from "../data/site";
 import Cover from "./Cover.astro";
-const [featured, ...rest] = work;
+import FloatPreview from "./FloatPreview.astro";
+const featured = work.filter((w) => w.featured);
+const rest = work.filter((w) => !w.featured);
+// The live app, when a project has one on this site.
+const liveLink = (w: (typeof work)[number]) => w.links.find((l) => l.href.startsWith("/"));
 ---
 
 <section class="section work" id="work" aria-labelledby="work-title">
@@ -13,24 +17,50 @@ const [featured, ...rest] = work;
       </p>
     </div>
 
-    <a class="feat" href={`/work/${featured.slug}`} data-feature>
-      <div class="feat__media" data-feature-media>
-        <Cover item={featured} vt eager />
-      </div>
-      <div class="feat__body">
-        <div class="feat__meta ui">
-          <span class="feat__badge">New</span>
-          <span>{featured.kind}, {featured.year}</span>
-        </div>
-        <h3 class="feat__title display" style={`view-transition-name:title-${featured.slug}`}>{featured.title}</h3>
-        <p class="feat__tagline">{featured.tagline}</p>
-        <p class="feat__summary muted">{featured.summary}</p>
-        <span class="feat__more ui">
-          Read the case study
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-        </span>
-      </div>
-    </a>
+    <div class="feats">
+      {
+        featured.map((item, i) => {
+          const live = liveLink(item);
+          return (
+            <article class:list={["feat", { "feat--flip": i % 2 === 1 }]} data-tilt-scope>
+              <div class="feat__media" data-feature-media>
+                <div class="feat__tilt" data-tilt="5">
+                  <Cover item={item} vt eager={i === 0} />
+                  <span class="feat__glare" aria-hidden="true" />
+                </div>
+              </div>
+              <div class="feat__body">
+                <div class="feat__meta ui">
+                  {i === 0 && <span class="feat__badge">New</span>}
+                  <span>
+                    {item.kind}, {item.year}
+                  </span>
+                </div>
+                <h3 class="feat__title display" style={`view-transition-name:title-${item.slug}`}>
+                  <a class="feat__link" href={`/work/${item.slug}`}>
+                    {item.title}
+                  </a>
+                </h3>
+                <p class="feat__tagline">{item.tagline}</p>
+                <p class="feat__summary muted">{item.summary}</p>
+                <div class="feat__actions">
+                  <span class="feat__more ui" aria-hidden="true">
+                    Read the case study
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                  {live && (
+                    <a class="btn btn--ghost btn--small feat__app" href={live.href}>
+                      {live.label}
+                      <svg class="nudge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
 
     <ul class="rows" role="list" data-rows>
       {
@@ -58,24 +88,14 @@ const [featured, ...rest] = work;
     </ul>
   </div>
 
-  <div class="float" aria-hidden="true" data-float>
-    <div class="float__inner" data-float-inner>
-      {
-        rest.map((item, i) => (
-          <div class="float__slide" data-slide={i}>
-            <Cover item={item} />
-          </div>
-        ))
-      }
-    </div>
-  </div>
+  <FloatPreview items={rest} />
 </section>
 
 <style>
   .work__head {
     display: grid;
     gap: 1.5rem;
-    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+    margin-bottom: clamp(3rem, 7vw, 5.5rem);
   }
   @media (min-width: 900px) {
     .work__head {
@@ -87,35 +107,66 @@ const [featured, ...rest] = work;
     max-width: 34ch;
   }
 
-  /* Featured project */
-  .feat {
+  /* Featured projects: big, alternating sides. */
+  .feats {
     display: grid;
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    text-decoration: none;
-    margin-bottom: clamp(3rem, 7vw, 5rem);
+    gap: clamp(4.5rem, 10vw, 8.5rem);
+    margin-bottom: clamp(5rem, 11vw, 9rem);
+  }
+  .feat {
+    position: relative;
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 4rem);
   }
   @media (min-width: 900px) {
     .feat {
-      grid-template-columns: 1.45fr 1fr;
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
       align-items: center;
+    }
+    .feat--flip {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+    }
+    .feat--flip .feat__media {
+      order: 2;
     }
   }
   .feat__media {
-    transform: scale(var(--s, 1)) rotate(var(--r, 0deg));
+    /* --s and --r come from scroll position (site.ts): the cover settles as it arrives. */
+    transform: scale(var(--s, 1)) rotate(calc(var(--r, 0deg) * var(--dir, 1)));
     transform-origin: 50% 80%;
-    will-change: transform;
   }
-  .feat__media :global(.cover) {
+  .feat--flip .feat__media {
+    --dir: -1;
+  }
+  .feat__tilt {
+    position: relative;
     border-radius: var(--radius-l);
-    box-shadow: 0 40px 80px -40px rgb(15 18 38 / 0.6);
   }
-  .feat__media :global(img) {
-    transition: transform 1200ms var(--ease-out);
+  /* A soft shadow on its own layer, so lifting it only changes opacity. */
+  .feat__tilt::before {
+    content: "";
+    position: absolute;
+    inset: 6% 4% -2%;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: 0 50px 90px -30px rgb(15 18 38 / 0.7);
+    opacity: calc(0.55 + var(--lift, 0) * 0.45);
   }
-  @media (hover: hover) and (pointer: fine) {
-    .feat:hover .feat__media :global(img) {
-      transform: scale(1.04);
-    }
+  .feat__tilt :global(.cover) {
+    border-radius: var(--radius-l);
+    box-shadow: 0 2px 6px -2px rgb(15 18 38 / 0.25);
+  }
+  .feat__glare {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at var(--gx, 50%) var(--gy, 0%),
+      rgb(255 255 255 / 0.2),
+      rgb(255 255 255 / 0) 55%
+    );
+    opacity: var(--lift, 0);
   }
   .feat__meta {
     display: flex;
@@ -133,32 +184,65 @@ const [featured, ...rest] = work;
   }
   .feat__title {
     font-size: clamp(2.8rem, 6vw, 5.2rem);
-    margin-block: 0.9rem 0.6rem;
+    margin-block: 0.9rem 0.7rem;
     width: fit-content;
+  }
+  .feat__link {
+    text-decoration: none;
+    transition: color var(--t-base) var(--ease-out);
+  }
+  /* The title link covers the whole card; the app link sits above it. */
+  .feat__link::after {
+    content: "";
+    position: absolute;
+    inset: -0.75rem;
+    z-index: 1;
+    border-radius: calc(var(--radius-l) + 0.75rem);
+  }
+  .feat__link:focus-visible {
+    outline: none;
+  }
+  .feat__link:focus-visible::after {
+    outline: 2px solid var(--delft);
+    outline-offset: 2px;
   }
   .feat__tagline {
     font-size: clamp(1.25rem, 1.8vw, 1.6rem);
     line-height: 1.35;
     font-style: italic;
     margin-bottom: 1rem;
+    text-wrap: balance;
   }
   .feat__summary {
     max-width: 42ch;
+  }
+  .feat__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+    margin-top: 1.75rem;
   }
   .feat__more {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 1.5rem;
     font-weight: 600;
     color: var(--delft);
   }
   .feat__more svg {
     transition: transform var(--t-base) var(--ease-out);
   }
+  .feat__app {
+    position: relative;
+    z-index: 2;
+  }
   @media (hover: hover) and (pointer: fine) {
     .feat:hover .feat__more svg {
       transform: translateX(4px);
+    }
+    .feat:hover .feat__link {
+      color: var(--delft);
     }
   }
 
@@ -177,10 +261,11 @@ const [featured, ...rest] = work;
     gap: 0.4rem 1.5rem;
     padding-block: clamp(1.5rem, 3vw, 2.4rem);
     text-decoration: none;
+    transition: opacity 350ms var(--ease-out);
   }
   @media (min-width: 900px) {
     .row__link {
-      grid-template-columns: 9rem 1fr 14rem 2.5rem;
+      grid-template-columns: 9rem 1fr 14rem 2.75rem;
       grid-template-areas: "year main kind arrow";
       align-items: center;
     }
@@ -200,7 +285,7 @@ const [featured, ...rest] = work;
     font-size: clamp(1.9rem, 4.2vw, 3.6rem);
     font-weight: 750;
     width: fit-content;
-    transition: font-stretch 500ms var(--ease-out), color var(--t-base) var(--ease-out);
+    transition: font-stretch 450ms var(--ease-out), color var(--t-base) var(--ease-out);
   }
   .row__tagline {
     font-size: 1.05rem;
@@ -215,8 +300,8 @@ const [featured, ...rest] = work;
     justify-self: end;
     display: grid;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border-radius: 50%;
     box-shadow: inset 0 0 0 1.5px var(--line);
     transition: background-color var(--t-base) var(--ease-out), color var(--t-base) var(--ease-out),
@@ -242,58 +327,9 @@ const [featured, ...rest] = work;
       box-shadow: none;
       transform: rotate(45deg);
     }
-  }
-  .row__link {
-    transition: opacity var(--t-base) var(--ease-out);
-  }
-
-  /* Cursor-following preview, desktop only */
-  .float {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 30;
-    width: 22rem;
-    pointer-events: none;
-    display: none;
-    transform: translate3d(var(--fx, -999px), var(--fy, -999px), 0);
-    will-change: transform;
-  }
-  @media (min-width: 900px) and (hover: hover) and (pointer: fine) {
-    .float {
-      display: block;
+    /* The row you're on stays bright; the others step back. */
+    .rows:has(.row__link:hover) .row__link:not(:hover) {
+      opacity: 0.45;
     }
-  }
-  .float__inner {
-    position: relative;
-    aspect-ratio: 16 / 10;
-    border-radius: var(--radius-m);
-    overflow: hidden;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.6) rotate(var(--rot, 0deg));
-    filter: blur(8px);
-    transition: opacity 250ms var(--ease-out), transform 450ms var(--ease-out), filter 250ms var(--ease-out);
-    box-shadow: 0 30px 60px -20px rgb(15 18 38 / 0.55);
-  }
-  .float.is-on .float__inner {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1) rotate(var(--rot, 0deg));
-    filter: none;
-  }
-  .float__slide {
-    position: absolute;
-    inset: 0;
-    transform: translateY(100%);
-    transition: transform 520ms var(--ease-drawer);
-  }
-  .float__slide.is-current {
-    transform: none;
-  }
-  .float__slide.is-past {
-    transform: translateY(-100%);
-  }
-  .float__slide :global(.cover) {
-    border-radius: 0;
-    height: 100%;
   }
 </style>
