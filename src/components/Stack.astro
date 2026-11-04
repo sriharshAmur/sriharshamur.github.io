@@ -1,0 +1,253 @@
+---
+import { stack } from "../data/site";
+// Rendered bottom-up in 3D, listed top-down in text.
+const n = stack.length;
+---
+
+<section class="section stack" id="stack" aria-labelledby="stack-title" data-stack>
+  <div class="wrap stack__wrap">
+    <div class="stack__intro">
+      <h2 class="stretch" id="stack-title" data-stretch>The full stack</h2>
+      <p class="muted" data-reveal>
+        “Full-stack” gets used loosely, so here it is layer by layer. Pick a layer to see what I use there.
+      </p>
+    </div>
+
+    <div class="iso" aria-hidden="true">
+      <div class="iso__stage">
+        {
+          stack.map((s, i) => (
+            <div class="slab" data-slab={i} style={`--i:${n - 1 - i}`}>
+              <span class="slab__label">{s.layer}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <ol class="layers" role="list">
+      {
+        stack.map((s, i) => (
+          <li class="layer" data-reveal style={`--i:${i}`}>
+            <button class="layer__btn" type="button" data-layer={i} aria-expanded={i === 1 ? "true" : "false"} aria-controls={`layer-${i}`}>
+              <span class="layer__name">{s.layer}</span>
+              <span class="layer__line muted">{s.line}</span>
+              <span class="layer__plus" aria-hidden="true" />
+            </button>
+            <div class="layer__panel" id={`layer-${i}`} data-panel>
+              <div class="layer__inner">
+                <ul class="tags" role="list">
+                  {s.tools.map((t, k) => (
+                    <li class="tag" style={`--k:${k}`}>
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .stack__wrap {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    grid-template-areas: "intro" "iso" "layers";
+  }
+  @media (min-width: 960px) {
+    .stack__wrap {
+      grid-template-columns: 1.05fr 1fr;
+      grid-template-areas: "intro intro" "iso layers";
+      align-items: center;
+    }
+  }
+  .stack__intro {
+    grid-area: intro;
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 960px) {
+    .stack__intro {
+      grid-template-columns: 1fr 22rem;
+      align-items: end;
+    }
+  }
+
+  /* Isometric exploded view. --p (0..1) comes from scroll position. */
+  .iso {
+    grid-area: iso;
+    position: relative;
+    width: min(100%, 34rem);
+    aspect-ratio: 1;
+    justify-self: center;
+    overflow: clip;
+    --p: 0;
+  }
+  .iso__stage {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: translateY(12%) rotateX(58deg) rotateZ(-42deg);
+  }
+  @media (max-width: 959px) {
+    .iso__stage {
+      transform: translateY(28%) rotateX(58deg) rotateZ(-42deg);
+    }
+  }
+  .slab {
+    --lift: 0px;
+    --gap: calc(10px + var(--p) * 58px);
+    position: absolute;
+    inset: 22%;
+    border-radius: 18px;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--i) * var(--gap) + var(--lift)));
+    transition: transform 600ms var(--ease-out), filter 400ms var(--ease-out), opacity 400ms var(--ease-out);
+    display: flex;
+    align-items: flex-end;
+    padding: 9%;
+  }
+  .slab::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transform: translateZ(-9px);
+    background: var(--edge);
+  }
+  .slab::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--face);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  }
+  .slab__label {
+    position: relative;
+    z-index: 1;
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 120%;
+    font-size: clamp(0.9rem, 2.1vw, 1.35rem);
+    color: var(--on);
+    line-height: 1;
+  }
+  .slab[data-slab="0"] { --face: #ffb020; --edge: #c98100; --on: #161a33; }
+  .slab[data-slab="1"] { --face: #ffffff; --edge: #c8cde0; --on: #161a33; }
+  .slab[data-slab="2"] { --face: #b9c6fb; --edge: #8193dc; --on: #161a33; }
+  .slab[data-slab="3"] { --face: #2849c9; --edge: #172d8a; --on: #ffffff; }
+  .slab[data-slab="4"] { --face: #161a33; --edge: #05060f; --on: #ffb020; }
+  :global(.dark) .slab[data-slab="4"] { --face: #2a2f55; --edge: #0b0d1d; }
+
+  .iso.has-active .slab {
+    filter: saturate(0.4);
+    opacity: 0.55;
+  }
+  .iso.has-active .slab.is-active {
+    --lift: 12px;
+    filter: none;
+    opacity: 1;
+  }
+
+  /* Text list */
+  .layers {
+    grid-area: layers;
+    border-top: 1px solid var(--line);
+  }
+  .layer {
+    border-bottom: 1px solid var(--line);
+  }
+  .layer__btn {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.2rem 1rem;
+    padding-block: 1.15rem;
+    text-align: left;
+  }
+  .layer__name {
+    font-family: var(--display);
+    font-weight: 750;
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    line-height: 1.1;
+    transition: font-stretch 450ms var(--ease-out), color var(--t-base) var(--ease-out);
+  }
+  .layer__line {
+    grid-column: 1;
+    font-size: 1rem;
+  }
+  .layer__plus {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    align-self: center;
+    position: relative;
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .layer__plus::before,
+  .layer__plus::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    margin-top: -1px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 400ms var(--ease-out);
+  }
+  .layer__plus::after {
+    transform: rotate(90deg);
+  }
+  .layer__btn[aria-expanded="true"] .layer__plus::after {
+    transform: rotate(0deg);
+  }
+  .layer__btn[aria-expanded="true"] .layer__name {
+    font-stretch: 118%;
+    color: var(--delft);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .layer__btn:hover .layer__name {
+      font-stretch: 118%;
+    }
+  }
+
+  /* Height animation via grid rows: interruptible, no measuring. */
+  .layer__panel {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 300ms var(--ease-drawer), visibility 300ms;
+  }
+  :global(.js) .layer__btn[aria-expanded="false"] + .layer__panel {
+    grid-template-rows: 0fr;
+    visibility: hidden;
+  }
+  .layer__inner {
+    overflow: hidden;
+  }
+  .layer__btn[aria-expanded="true"] + .layer__panel {
+    grid-template-rows: 1fr;
+  }
+  .layer__panel .tags {
+    padding-bottom: 1.3rem;
+  }
+  .layer__panel .tag {
+    opacity: 1;
+    transition: opacity 250ms var(--ease-out), transform 350ms var(--ease-out);
+  }
+  :global(.js) .layer__btn[aria-expanded="false"] + .layer__panel .tag {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  .layer__btn[aria-expanded="true"] + .layer__panel .tag {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(80ms + var(--k) * 30ms);
+  }
+</style>

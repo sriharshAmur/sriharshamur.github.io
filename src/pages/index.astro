@@ -1,87 +1,16 @@
 ---
-// Component Imports
-import MainHead from "../components/MainHead.astro";
-import Nav from "../components/Nav.astro";
+import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
+import Work from "../components/Work.astro";
+import Stack from "../components/Stack.astro";
+import Path from "../components/Path.astro";
 import About from "../components/About.astro";
-import Skills from "../components/Skills.astro";
-import Experience from "../components/Experience.astro";
-import Project from "../components/Project.astro";
-import Footer from "../components/Footer.astro";
-import Contact from "../components/Contact.astro";
-
-// Data Fetching: List all Markdown posts in the repo.
-// const projects = await Astro.glob("./project/**/*.md");
-// const featuredProject = projects[0];
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/core-concepts/astro-components/
 ---
 
-<script>
-  const themeID = document.querySelector("#theme");
-  const lightMode = themeID?.querySelector("#light-mode");
-  const darkMode = themeID?.querySelector("#dark-mode");
-  const theme = (() => {
-    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
-      return localStorage.getItem("theme");
-    }
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
-    return "light";
-  })();
-
-  if (theme === "light") {
-    lightMode?.classList.remove("hidden");
-    darkMode?.classList.add("hidden");
-    document.documentElement.classList.remove("dark");
-  } else {
-    lightMode?.classList.add("hidden");
-    darkMode?.classList.remove("hidden");
-
-    document.documentElement.classList.add("dark");
-  }
-  window.localStorage.setItem("theme", theme!);
-
-  themeID?.addEventListener("click", () => {
-    const isDarkMode = window.localStorage.getItem("theme") === "dark";
-    if (isDarkMode) {
-      window.localStorage.setItem("theme", "light");
-      lightMode?.classList.remove("hidden");
-      darkMode?.classList.add("hidden");
-      document.documentElement.classList.remove("dark");
-    } else {
-      window.localStorage.setItem("theme", "dark");
-      lightMode?.classList.add("hidden");
-      darkMode?.classList.remove("hidden");
-      document.documentElement.classList.add("dark");
-    }
-  });
-
-  // const mainContainer = document.getElementById("main-container");
-</script>
-<MainHead
-  title="Sri Harsh Amur | Home"
-  description="Sri Harsh Amur's Portfolio Page"
-/>
-
-<div
-  id="main-container"
-  class="bg-white dark:bg-gray-900 dark:text-slate-200 px-2 md:px-0"
->
-  <Nav />
-
+<Base active="home">
   <Hero />
+  <Work />
+  <Stack />
+  <Path />
   <About />
-  <div id="projects" class="my-8 invisible">gap</div>
-  <Project />
-  <div id="skills" class="my-8 invisible">gap</div>
-  <Skills />
-  <div id="experience" class="my-8 invisible">gap</div>
-  <Experience />
-  <div id="contact" class="my-8 invisible">gap</div>
-  <Contact />
-
-  <Footer />
-</div>
+</Base>

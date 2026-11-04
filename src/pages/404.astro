@@ -1,24 +1,54 @@
 ---
-import MainHead from "../components/MainHead.astro";
-import Footer from "../components/Footer.astro";
-import Nav from "../components/Nav.astro";
+import Base from "../layouts/Base.astro";
 ---
 
-<html lang="en">
-  <head>
-    <MainHead title="Not Found" />
-    <style>
-      .wrapper {
-        margin-top: 2em;
-        margin-bottom: 2em;
-      }
-    </style>
-  </head>
-  <body>
-    <Nav />
-    <div class="wrapper mx-auto w-fit">
-      <h1>We hit a 404. Page Not Found</h1>
+<Base title="Page not found · Sri Harsh Amur" description="This page doesn't exist.">
+  <section class="lost wrap">
+    <h1 class="lost__code display" aria-label="404">
+      <span style="--i:0">4</span><span class="lost__o" style="--i:1">0</span><span style="--i:2">4</span>
+    </h1>
+    <p class="lost__text">This page doesn't exist, or it moved during the redesign.</p>
+    <div class="lost__cta">
+      <a class="btn" href="/">Go to the home page</a>
+      <a class="btn btn--ghost" href="/cv">Read my CV</a>
     </div>
-    <Footer />
-  </body>
-</html>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    min-height: 80svh;
+    display: grid;
+    align-content: center;
+    gap: 1.5rem;
+    padding-top: 6rem;
+  }
+  .lost__code {
+    font-size: clamp(7rem, 30vw, 22rem);
+    display: flex;
+  }
+  .lost__code span {
+    display: inline-block;
+    animation: wobble 1300ms var(--ease-out) backwards;
+    animation-delay: calc(var(--i) * 80ms);
+  }
+  .lost__o {
+    color: var(--marigold);
+  }
+  .lost__text {
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    max-width: 32ch;
+  }
+  .lost__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  @keyframes wobble {
+    from {
+      opacity: 0;
+      font-stretch: 50%;
+      transform: translateY(0.2em);
+    }
+  }
+</style>

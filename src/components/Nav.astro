@@ -1,134 +1,211 @@
 ---
-import { Icon } from "astro-icon";
+export interface Props {
+  active: "home" | "work" | "cv";
+}
+const { active } = Astro.props;
+const onHome = Astro.url.pathname === "/";
+const items = [
+  { href: onHome ? "#work" : "/#work", label: "Work", key: "work" },
+  { href: onHome ? "#stack" : "/#stack", label: "Stack", key: "stack" },
+  { href: onHome ? "#path" : "/#path", label: "Path", key: "path" },
+  { href: "/cv", label: "CV", key: "cv" },
+];
 ---
 
-<script src="./Nav.js"></script>
-<div
-  class="w-full sticky top-0 bg-white dark:bg-gray-900 dark:text-slate-200 z-10"
->
-  <nav class="pt-2 md:w-10/12 md:mx-auto">
-    <div class="flex justify-between items-center px-2 py-2">
-      <div class="text-2xl md:text-3xl font-black">
-        <a href="/">SHA</a>
-      </div>
-      <div class="flex items-center">
-        <div id="theme" class="mr-2">
-          <Icon
-            id="light-mode"
-            class="hidden icon"
-            name="ic:baseline-mode-night"
-            size={30}
-          />
-          <Icon
-            id="dark-mode"
-            class="icon"
-            name="ic:baseline-light-mode"
-            size={30}
-          />
-        </div>
-        <div class="flex items-center flex-row-reverse md:flex-row">
-          <div class="ml-2 md:hidden" id="menu">
-            <Icon name="ic:outline-menu" size={20} />
-          </div>
-          <div class="hidden md:flex mr-4">
-            <a href="#hero">
-              <div class="mx-2 hover:text-red-400 cursor-pointer">Home</div>
-            </a>
-            <a href="#about">
-              <div class="mx-2 hover:text-red-400 cursor-pointer">About</div>
-            </a>
-            <a href="#projects">
-              <div class="mx-2 hover:text-red-400 cursor-pointer">Projects</div>
-            </a>
-            <a href="#skills">
-              <div class="mx-2 hover:text-red-400 cursor-pointer">Skills</div>
-            </a>
-            <a href="#experience">
-              <div class="mx-2 hover:text-red-400 cursor-pointer">
-                Experience
-              </div>
-            </a>
-            <a href="#contact">
-              <div class="mx-2 hover:text-red-400 cursor-pointer">Contact</div>
-            </a>
-          </div>
-          <a
-            href="https://drive.google.com/file/d/1-BmTtDarlGo6_lo9gVz16vmmpjC1cyN0/view?usp=sharing"
-            target="_blank"
-          >
-            <div
-              class="border-2 rounded p-2 font-bold text-red-400 hover:bg-red-400 hover:text-white flex items-center"
+<header class="nav" data-nav>
+  <nav class="nav__bar ui" aria-label="Main">
+    <a class="nav__mark" href="/" aria-label="Sri Harsh Amur, home" aria-current={onHome ? "page" : undefined}>
+      <span class="nav__dot" aria-hidden="true"></span>
+      <span class="nav__name">Sri Harsh</span>
+    </a>
+    <div class="nav__links" data-nav-links>
+      <span class="nav__pill" aria-hidden="true" data-nav-pill></span>
+      <ul class="nav__list" role="list">
+      {
+        items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              data-key={item.key}
+              class:list={["nav__link", { "is-active": active === item.key }]}
+              aria-current={active === item.key ? "page" : undefined}
             >
-              <div>View my CV</div>
-              <Icon name="ic:baseline-arrow-forward-ios" size={15} />
-            </div>
-          </a>
-        </div>
-      </div>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+      </ul>
     </div>
+    <button class="nav__theme" type="button" data-theme-toggle aria-label="Switch colour theme">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <mask id="moon-mask">
+          <rect width="24" height="24" fill="#fff"></rect>
+          <circle class="nav__moon" cx="24" cy="4" r="7" fill="#000"></circle>
+        </mask>
+        <circle class="nav__sun-core" cx="12" cy="12" r="5" mask="url(#moon-mask)" fill="currentColor"></circle>
+        <g class="nav__rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="12" y1="1.5" x2="12" y2="3.5"></line>
+          <line x1="12" y1="20.5" x2="12" y2="22.5"></line>
+          <line x1="1.5" y1="12" x2="3.5" y2="12"></line>
+          <line x1="20.5" y1="12" x2="22.5" y2="12"></line>
+          <line x1="4.6" y1="4.6" x2="6" y2="6"></line>
+          <line x1="18" y1="18" x2="19.4" y2="19.4"></line>
+          <line x1="4.6" y1="19.4" x2="6" y2="18"></line>
+          <line x1="18" y1="6" x2="19.4" y2="4.6"></line>
+        </g>
+      </svg>
+    </button>
   </nav>
-</div>
+</header>
 
-<div
-  id="mobile-nav"
-  class="pt-3 fixed top-0 left-0 w-screen h-screen bg-[#212121] z-20 hidden"
->
-  <div class="flex justify-between items-center px-2 py-2 text-white">
-    <div class="text-2xl md:text-3xl font-black">
-      <a href="/">SHA</a>
-    </div>
-    <div id="close" class="ml-2 md:hidden text-white" id="menu">
-      <Icon name="clarity:close-line" size={30} />
-    </div>
-  </div>
+<style>
+  .nav {
+    position: fixed;
+    inset: 0.9rem 0 auto;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    transition: transform 420ms var(--ease-drawer);
+    view-transition-name: site-nav;
+  }
+  .nav.is-hidden:not(:focus-within) {
+    transform: translateY(calc(-100% - 1.2rem));
+  }
+  .nav__bar {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.35rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    box-shadow: 0 0 0 1px var(--line), 0 12px 32px -18px rgb(22 26 51 / 0.45);
+    font-size: 0.95rem;
+  }
+  .nav__mark {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.9rem 0.45rem 0.6rem;
+    text-decoration: none;
+    font-weight: 700;
+    font-stretch: 105%;
+    border-radius: 999px;
+  }
+  .nav__dot {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
+    background: var(--marigold);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--marigold) 70%, #000);
+    transition: transform var(--t-base) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nav__mark:hover .nav__dot {
+      transform: scale(1.25);
+    }
+  }
+  .nav__links {
+    position: relative;
+  }
+  .nav__list {
+    position: relative;
+    display: flex;
+    gap: 0.1rem;
+  }
+  .nav__pill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--w, 0px);
+    transform: translateX(var(--x, 0px));
+    border-radius: 999px;
+    background: var(--ink);
+    opacity: var(--o, 0);
+    transition: transform 420ms var(--ease-drawer), width 420ms var(--ease-drawer), opacity var(--t-quick) var(--ease-out);
+  }
+  .nav__pill.no-anim {
+    transition: none;
+  }
+  .nav__link {
+    position: relative;
+    display: block;
+    min-height: 44px;
+    align-content: center;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--ink-2);
+    transition: color var(--t-base) var(--ease-out);
+  }
+  .nav__link.is-active {
+    color: var(--paper);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nav__link:not(.is-active):hover {
+      color: var(--ink);
+    }
+  }
+  .nav__theme {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    color: var(--ink);
+    transition: transform var(--t-press) var(--ease-out), background-color var(--t-quick);
+  }
+  .nav__theme:active {
+    transform: scale(0.9);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nav__theme:hover {
+      background: var(--paper-2);
+    }
+  }
+  .nav__theme svg {
+    transition: transform 600ms var(--ease-out);
+  }
+  .nav__moon {
+    transition: cx 500ms var(--ease-out), cy 500ms var(--ease-out);
+  }
+  .nav__sun-core {
+    transition: r 500ms var(--ease-out);
+  }
+  .nav__rays {
+    transform-origin: 12px 12px;
+    transition: transform 500ms var(--ease-out), opacity 300ms var(--ease-out);
+  }
+  :global(.dark) .nav__theme svg {
+    transform: rotate(-40deg);
+  }
+  :global(.dark) .nav__moon {
+    cx: 17;
+    cy: 7;
+  }
+  :global(.dark) .nav__sun-core {
+    r: 8;
+  }
+  :global(.dark) .nav__rays {
+    transform: scale(0.4) rotate(45deg);
+    opacity: 0;
+  }
 
-  <div class="text-white flex flex-col items-center mt-4">
-    <div
-      data-url="hero"
-      class="links mx-2 hover:text-red-400 cursor-pointer my-4 text-2xl"
-    >
-      Home
-    </div>
-    <div
-      data-url="about"
-      class="links mx-2 hover:text-red-400 cursor-pointer my-4 text-2xl"
-    >
-      About
-    </div>
-    <div
-      data-url="projects"
-      class="links mx-2 hover:text-red-400 cursor-pointer my-4 text-2xl"
-    >
-      Projects
-    </div>
-    <div
-      data-url="skills"
-      class="links mx-2 hover:text-red-400 cursor-pointer my-4 text-2xl"
-    >
-      Skills
-    </div>
-    <div
-      data-url="experience"
-      class="links mx-2 hover:text-red-400 cursor-pointer my-4 text-2xl"
-    >
-      Experience
-    </div>
-    <div
-      data-url="contact"
-      class="links mx-2 hover:text-red-400 cursor-pointer my-4 text-2xl"
-    >
-      Contact
-    </div>
-  </div>
-  <a
-    href="https://drive.google.com/file/d/1-BmTtDarlGo6_lo9gVz16vmmpjC1cyN0/view?usp=sharing"
-    target="_blank"
-  >
-    <div
-      class="w-fit text-center mx-auto mt-6 text-xl px-4 border-2 rounded py-2 font-bold text-red-400 hover:bg-red-400 hover:text-white flex items-center"
-    >
-      <div>View my CV</div>
-      <Icon name="ic:baseline-arrow-forward-ios" size={15} />
-    </div>
-  </a>
-</div>
+  @media (max-width: 560px) {
+    .nav__name {
+      display: none;
+    }
+    .nav__mark {
+      padding: 0.45rem 0.5rem;
+    }
+    .nav__link {
+      padding: 0.45rem 0.6rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>

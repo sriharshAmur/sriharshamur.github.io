@@ -1,0 +1,435 @@
+---
+import Base from "../layouts/Base.astro";
+import { profile, experience, education, stack, work } from "../data/site";
+const site = "sriharsh.com";
+---
+
+<Base title="CV · Sri Harsh Amur" description={profile.summary} active="cv">
+  <div class="cv wrap">
+    <header class="cv__head">
+      <div class="cv__id">
+        <img class="cv__photo" src="/img/portrait-cv.png" alt="" width="250" height="250" />
+        <div>
+          <h1 class="cv__name display">{profile.name}</h1>
+          <p class="cv__role ui">{profile.role}</p>
+        </div>
+      </div>
+      <div class="cv__tools">
+        <button class="btn" type="button" data-print>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
+          Save as PDF
+        </button>
+      </div>
+    </header>
+
+    <div class="cv__grid">
+      <aside class="cv__side">
+        <section class="block" data-reveal>
+          <h2 class="block__title">Contact</h2>
+          <ul class="facts" role="list">
+            <li><a class="link" href={`mailto:${profile.email}`}>{profile.email}</a></li>
+            <li><a class="link" href={`tel:${profile.phone.replace(/\s/g, "")}`}>{profile.phone}</a></li>
+            <li>{profile.location}</li>
+            <li><a class="link" href="https://sriharsh.com">{site}</a></li>
+            <li><a class="link" href={profile.links.github}>github.com/sriharshAmur</a></li>
+            <li><a class="link" href={profile.links.linkedin}>linkedin.com/in/sriharsh-amur</a></li>
+          </ul>
+        </section>
+
+        <section class="block" data-reveal style="--i:1">
+          <h2 class="block__title">Skills</h2>
+          <dl class="skills">
+            {
+              stack.map((s) => (
+                <div>
+                  <dt>{s.layer}</dt>
+                  <dd>{s.tools.join(", ")}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </section>
+
+        <section class="block" data-reveal style="--i:2">
+          <h2 class="block__title">Education</h2>
+          <ul class="edu" role="list">
+            {
+              education.map((e) => (
+                <li>
+                  <h3>{e.school}</h3>
+                  <p class="muted">{e.detail}</p>
+                  <p class="muted">
+                    {e.place}, {e.years}
+                  </p>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="block" data-reveal style="--i:3">
+          <h2 class="block__title">Speaking</h2>
+          <p><strong>Tableau Conference 2024</strong>, San Diego</p>
+          <p class="muted">Talk on VizExtensions</p>
+        </section>
+      </aside>
+
+      <div class="cv__main">
+        <section class="block">
+          <h2 class="block__title">Profile</h2>
+          <p class="cv__summary" data-reveal>{profile.summary}</p>
+        </section>
+
+        <section class="block">
+          <h2 class="block__title">Experience</h2>
+          <ol class="jobs" role="list">
+            {
+              experience.map((r, i) => (
+                <li class="job" data-reveal style={`--i:${i}`}>
+                  <div class="job__top">
+                    <h3 class="job__title">{r.title}</h3>
+                    <p class="job__when ui">
+                      {r.start} – {r.end}
+                    </p>
+                  </div>
+                  <p class="job__where ui">
+                    {r.company}, {r.place}
+                  </p>
+                  <ul class="job__points">
+                    {r.points.map((p) => (
+                      <li>{p}</li>
+                    ))}
+                  </ul>
+                  <ul class="tags" role="list">
+                    {r.tools.map((t) => (
+                      <li class="tag">{t}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <section class="block">
+          <h2 class="block__title">Selected projects</h2>
+          <ul class="projects" role="list">
+            {
+              work.map((w, i) => (
+                <li class="project" data-reveal style={`--i:${i}`}>
+                  <a href={`/work/${w.slug}`} class="project__link">
+                    <span class="project__title">{w.title}</span>
+                    <span class="project__year ui">{w.year}</span>
+                  </a>
+                  <p class="muted">{w.summary}</p>
+                  <p class="project__tools ui">{w.tools.join(", ")}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .cv {
+    padding-top: 7.5rem;
+  }
+  .cv__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    padding-bottom: clamp(2rem, 5vw, 3rem);
+    border-bottom: 2px solid var(--ink);
+  }
+  .cv__id {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+  .cv__photo {
+    width: clamp(5rem, 12vw, 8.5rem);
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    animation: pop 900ms var(--ease-out) 100ms backwards;
+  }
+  .cv__name {
+    font-size: clamp(2.6rem, 7vw, 5.5rem);
+    animation: widen 1200ms var(--ease-out) backwards;
+  }
+  .cv__role {
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    color: var(--delft);
+    margin-top: 0.4rem;
+    animation: rise 700ms var(--ease-out) 300ms backwards;
+  }
+  .cv__tools {
+    animation: rise 700ms var(--ease-out) 400ms backwards;
+  }
+  .cv__grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    padding-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  @media (min-width: 900px) {
+    .cv__grid {
+      grid-template-columns: 19rem 1fr;
+    }
+    .cv__side {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+  .cv__side,
+  .cv__main {
+    display: grid;
+    gap: 2.5rem;
+    align-content: start;
+  }
+  .cv__main {
+    gap: 3.5rem;
+  }
+  .block__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--delft);
+    margin-bottom: 1rem;
+  }
+  .facts {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+  .skills {
+    display: grid;
+    gap: 0.9rem;
+    font-size: 1rem;
+  }
+  .skills dt {
+    font-family: var(--display);
+    font-weight: 650;
+  }
+  .skills dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .edu {
+    display: grid;
+    gap: 1rem;
+    font-size: 1rem;
+  }
+  .edu h3 {
+    font-size: 1.1rem;
+  }
+  .cv__summary {
+    font-size: clamp(1.25rem, 1.9vw, 1.6rem);
+    line-height: 1.45;
+    max-width: 40ch;
+  }
+  .jobs {
+    display: grid;
+    gap: 2.75rem;
+  }
+  .job__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.25rem 1rem;
+  }
+  .job__title {
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  }
+  .job__when {
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .job__where {
+    color: var(--delft);
+    margin-block: 0.3rem 0.9rem;
+  }
+  .job__points {
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: 1.1rem;
+    max-width: 44rem;
+  }
+  .job__points li::marker {
+    color: var(--marigold);
+  }
+  .projects {
+    display: grid;
+    gap: 1.8rem;
+  }
+  .project__link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    text-decoration: none;
+    margin-bottom: 0.3rem;
+  }
+  .project__title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    transition: color var(--t-base) var(--ease-out), font-stretch 450ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .project__link:hover .project__title {
+      color: var(--delft);
+      font-stretch: 112%;
+    }
+  }
+  .project__year {
+    color: var(--ink-3);
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .project__tools {
+    font-size: 0.9rem;
+    color: var(--ink-3);
+    margin-top: 0.3rem;
+  }
+
+  @keyframes widen {
+    from {
+      font-stretch: 55%;
+      opacity: 0;
+      filter: blur(8px);
+    }
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  /* Paper version: one clean A4 document in ink only. */
+  @media print {
+    @page {
+      size: A4;
+      margin: 14mm 14mm 12mm;
+    }
+    :global(html),
+    :global(body) {
+      --paper: #fff !important;
+      --paper-2: #fff !important;
+      --ink: #111 !important;
+      --ink-2: #333 !important;
+      --ink-3: #555 !important;
+      --delft: #2849c9 !important;
+      --marigold: #111 !important;
+      color-scheme: light !important;
+      background: #fff !important;
+      color: #111 !important;
+      font-size: 10pt;
+    }
+    :global(.nav),
+    :global(.foot),
+    :global(.skip),
+    .cv__tools {
+      display: none !important;
+    }
+    :global([data-reveal]) {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+    .cv {
+      padding: 0;
+      width: 100%;
+    }
+    .cv__head {
+      padding-bottom: 5mm;
+    }
+    .cv__photo {
+      width: 22mm;
+    }
+    .cv__name {
+      font-size: 26pt;
+    }
+    .cv__grid {
+      grid-template-columns: 55mm 1fr;
+      gap: 8mm;
+      padding-top: 6mm;
+    }
+    .cv__side {
+      position: static;
+      gap: 5mm;
+    }
+    .cv__main {
+      gap: 6mm;
+    }
+    .block__title {
+      margin-bottom: 2mm;
+      color: #2849c9;
+    }
+    .cv__summary {
+      font-size: 11pt;
+      max-width: none;
+    }
+    .jobs {
+      gap: 5mm;
+    }
+    .job,
+    .project {
+      break-inside: avoid;
+    }
+    .job__title {
+      font-size: 13pt;
+    }
+    .job__points {
+      margin-bottom: 2mm;
+      gap: 1mm;
+    }
+    .projects {
+      gap: 3mm;
+    }
+    .project__title {
+      font-size: 11pt;
+    }
+    .project__tools,
+    .project__year,
+    .job__when {
+      font-size: 8.5pt;
+    }
+    :global(.tag) {
+      background: none;
+      padding: 0;
+      font-size: 8.5pt;
+      color: #555;
+    }
+    :global(.tag:not(:last-child))::after {
+      content: ",";
+    }
+    .facts,
+    .skills,
+    .edu {
+      font-size: 9pt;
+    }
+    :global(.link) {
+      background: none;
+    }
+  }
+</style>

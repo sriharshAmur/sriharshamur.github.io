@@ -1,27 +1,161 @@
 ---
-const currentYear = new Date().getFullYear();
+import { profile } from "../data/site";
+const year = new Date().getFullYear();
 ---
 
-<footer>
-  &copy; {currentYear} Sri Harsh Amur
-  <a href="https://astro.build" target="_blank">
-    <small class="byline">🚀 Built using Astro</small>
-  </a>
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <h2 class="stretch foot__title" data-stretch>Say hello</h2>
+    <div class="foot__grid">
+      <p class="foot__lead">
+        Building something, hiring, or just curious about a project here? Email is the quickest way to reach me.
+      </p>
+      <div class="foot__actions">
+        <button class="copy ui" type="button" data-copy={profile.email} aria-label={`Copy ${profile.email}`}>
+          <span class="copy__text">{profile.email}</span>
+          <span class="copy__icon" aria-hidden="true">
+            <svg class="copy__a" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+            <svg class="copy__b" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"></path></svg>
+          </span>
+          <span class="copy__toast" role="status" aria-live="polite" data-copy-status></span>
+        </button>
+        <ul class="foot__links ui" role="list">
+          <li><a class="link" href={`mailto:${profile.email}`}>Write an email</a></li>
+          <li><a class="link" href={profile.links.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a class="link" href={profile.links.github} target="_blank" rel="noopener">GitHub</a></li>
+          <li><a class="link" href="/cv">CV</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot__base ui">
+      <span>© {year} {profile.name}</span>
+      <span>It's <time data-clock>--:--</time> in Enschede</span>
+    </div>
+  </div>
 </footer>
-<style>
-  footer {
-    text-align: center;
-    padding-top: 4rem;
-    padding-right: 2rem;
-    padding-bottom: 4rem;
-    padding-left: 2rem;
-  }
 
-  .byline {
-    display: block;
-    margin-top: 1rem;
-    color: var(--t-subdue);
-    font-size: var(--f-d2);
-    text-transform: uppercase;
+<style>
+  .foot {
+    padding-block: clamp(5rem, 12vw, 9rem) 2rem;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+    margin-top: clamp(3rem, 8vw, 6rem);
+    --line: rgb(236 238 242 / 0.16);
+  }
+  :global(.dark) .foot {
+    background: #080a18;
+    color: var(--ink);
+  }
+  .foot__title {
+    font-size: clamp(3.5rem, 15vw, 13rem);
+    color: var(--marigold);
+  }
+  .foot__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+  }
+  @media (min-width: 860px) {
+    .foot__grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+  }
+  .foot__lead {
+    max-width: 30ch;
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    line-height: 1.4;
+  }
+  .foot__actions {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+  .copy {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.3rem;
+    border-radius: var(--radius-m);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+    font-size: clamp(1rem, 2.2vw, 1.4rem);
+    font-weight: 600;
+    transition: transform var(--t-press) var(--ease-out), box-shadow var(--t-base) var(--ease-out);
+  }
+  .copy:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .copy:hover {
+      box-shadow: inset 0 0 0 1.5px var(--marigold);
+    }
+  }
+  .copy__icon {
+    position: relative;
+    width: 18px;
+    height: 18px;
+  }
+  .copy__icon svg {
+    position: absolute;
+    inset: 0;
+    transition: opacity 200ms var(--ease-out), transform 300ms var(--ease-out), filter 200ms var(--ease-out);
+  }
+  .copy__b {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(4px);
+    color: var(--marigold);
+  }
+  .copy.is-copied .copy__a {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(4px);
+  }
+  .copy.is-copied .copy__b {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .copy__toast {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.6rem);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: var(--marigold);
+    color: #161a33;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(-50%, 6px) scale(0.95);
+    transform-origin: 50% 100%;
+    transition: opacity 200ms var(--ease-out), transform 300ms var(--ease-out);
+    pointer-events: none;
+  }
+  .copy.is-copied .copy__toast {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  .foot__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.6rem;
+  }
+  .foot__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: clamp(4rem, 9vw, 7rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.9rem;
+    opacity: 0.75;
+  }
+  .foot__base time {
+    font-variant-numeric: tabular-nums;
   }
 </style>

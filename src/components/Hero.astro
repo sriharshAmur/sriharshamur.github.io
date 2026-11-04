@@ -1,55 +1,268 @@
 ---
-import { Icon } from "astro-icon";
+import { profile, experience } from "../data/site";
+const current = experience[0];
+const split = (word: string) => [...word];
+const lines = [profile.firstName, profile.lastName];
+let n = 0;
 ---
 
-<div id="hero" class="h-[90vh] md:w-10/12 md:mx-auto mb-10">
-  <div class="h-full flex flex-col justify-between">
-    <div
-      class="flex-[2] flex flex-col-reverse md:flex-row md:justify-between items-center"
-    >
-      <div class="text-center md:text-left md:mt-0 mt-8">
-        <div class="text-4xl md:text-6xl mb-10 font-normal">
-          <span class="mr-2">👋</span>I'm <span
-            class="font-semibold text-secondaryLight text-red-400"
-            >Sri Harsh Amur</span
-          >
-        </div>
-        <div class="text-xl px-2 md:px-0 md:text-3xl">
-          A Front (& ~Back 👀) End Developer.<br /> I have quite a few unfinished
-          projects 🤔
-        </div>
-      </div>
-      <div class="w-2/5 md:w-[300px]">
-        <img
-          src="https://avatars.githubusercontent.com/u/19891301"
-          alt="Profile Pciture"
-          width="100%"
-          class="rounded-[50%]"
-        />
-      </div>
+<section class="hero" aria-labelledby="hero-name">
+  <div class="wrap hero__wrap">
+    <p class="hero__now ui">
+      <span class="hero__live" aria-hidden="true"></span>
+      <span>{current.title} at {current.company}</span>
+      <span class="hero__sep" aria-hidden="true"></span>
+      <span class="hero__clock">Enschede, <time data-clock>--:--</time></span>
+    </p>
+
+    <h1 class="hero__name display" id="hero-name" data-proximity aria-label={profile.name}>
+      {
+        lines.map((line) => (
+          <span class="hero__line" aria-hidden="true">
+            {split(line).map((ch) =>
+              ch === " " ? (
+                <span class="hero__space"> </span>
+              ) : (
+                <span class="ch" style={`--i:${n++}`}>
+                  {ch}
+                </span>
+              )
+            )}
+          </span>
+        ))
+      }
+    </h1>
+
+    <div class="hero__portrait" data-parallax aria-hidden="true">
+      <div class="hero__disc" data-depth="0.35"></div>
+      <img class="hero__photo" data-depth="0.8" src="/img/portrait.png" alt="" width="460" height="460" fetchpriority="high" />
     </div>
 
-    <div
-      class="flex-1 flex flex-col md:flex-row justify-center md:justify-between items-center"
-    >
-      <div class="flex items-start">
-        <div class="mr-2">
-          <a href="https://www.linkedin.com/in/sriharsh-amur/" target="_blank">
-            <Icon name="ri:linkedin-box-fill" size={30} />
-          </a>
-        </div>
-        <div class="mr-2">
-          <a href="https://www.linkedin.com/in/sriharsh-amur/" target="_blank">
-          </a><a href="https://github.com/sriharshAmur" target="_blank">
-            <Icon name="ri:github-fill" size={30} />
-          </a>
-        </div>
+    <div class="hero__foot">
+      <p class="hero__intro">{profile.intro}</p>
+      <div class="hero__cta">
+        <a class="btn" href="/cv">
+          Read my CV
+        </a>
+        <a class="btn btn--ghost" href="#work">See selected work</a>
       </div>
-      <a href="mailto:sriharshamur@gmail.com" target="_blank">
-        <div class="text-xl flex items-center mt-4 md:mt-0 text-red-400">
-          sriharshamur@gmail.com
-        </div>
-      </a>
     </div>
   </div>
-</div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: 7rem 4rem;
+    position: relative;
+  }
+  .hero__wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "portrait" "now" "name" "foot";
+    gap: 1.5rem;
+    position: relative;
+  }
+  @media (min-width: 900px) {
+    .hero__wrap {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
+      grid-template-areas:
+        "now portrait"
+        "name portrait"
+        "foot foot";
+      column-gap: 2rem;
+      row-gap: 2rem;
+    }
+  }
+
+  /* Live status line */
+  .hero__now {
+    grid-area: now;
+    align-self: end;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--ink-2);
+    animation: rise 900ms var(--ease-out) 900ms backwards;
+  }
+  .hero__live {
+    position: relative;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: #2fb36a;
+  }
+  .hero__live::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: inherit;
+    animation: ping 2.4s var(--ease-out) 2;
+  }
+  .hero__sep {
+    width: 1.2rem;
+    height: 1px;
+    background: var(--line);
+  }
+  .hero__clock time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The name. Letters stretch open from condensed, then respond to the pointer. */
+  .hero__name {
+    grid-area: name;
+    font-size: clamp(2.75rem, 15.5vw, 14.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    font-weight: 850;
+    position: relative;
+    z-index: 2;
+  }
+  .hero__line {
+    display: block;
+    white-space: nowrap;
+  }
+  @media (min-width: 900px) {
+    .hero__name {
+      font-size: clamp(5rem, 10.4vw, 10rem);
+    }
+  }
+  .hero__line + .hero__line {
+    color: var(--delft);
+  }
+  .ch {
+    display: inline-block;
+    font-stretch: var(--wd, 100%);
+    font-weight: var(--wg, 850);
+    transition: font-stretch 500ms var(--ease-out), font-weight 500ms var(--ease-out);
+    animation: stretch-in 1400ms var(--ease-out) backwards;
+    animation-delay: calc(120ms + var(--i) * 45ms);
+  }
+  .hero__space {
+    display: inline-block;
+    width: 0.22em;
+  }
+  @keyframes stretch-in {
+    0% {
+      opacity: 0;
+      font-stretch: 50%;
+      font-weight: 300;
+      transform: translateY(0.35em);
+      filter: blur(10px);
+    }
+    40% {
+      opacity: 1;
+      filter: blur(0);
+    }
+    100% {
+      font-stretch: 100%;
+      font-weight: 850;
+      transform: none;
+    }
+  }
+
+  /* Portrait: a marigold sun with the cutout standing in front of it. */
+  .hero__portrait {
+    grid-area: portrait;
+    position: relative;
+    width: min(56vw, 18rem);
+    aspect-ratio: 1;
+    justify-self: start;
+  }
+  @media (min-width: 900px) {
+    .hero__portrait {
+      width: 100%;
+      max-width: 26rem;
+      justify-self: end;
+      align-self: center;
+    }
+  }
+  .hero__disc,
+  .hero__photo {
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+    transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
+    transition: transform 900ms var(--ease-out);
+  }
+  .hero__disc {
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--marigold) 70%, #fff) 0%, var(--marigold) 55%);
+    animation: disc-in 1200ms var(--ease-out) 250ms backwards;
+  }
+  .hero__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    clip-path: inset(-20% 0 0 0 round 0 0 50% 50%);
+    animation: photo-in 1100ms var(--ease-out) 520ms backwards;
+  }
+  @keyframes disc-in {
+    from {
+      transform: scale(0.4);
+      opacity: 0;
+    }
+  }
+  @keyframes photo-in {
+    from {
+      opacity: 0;
+      transform: translateY(14%);
+      filter: blur(12px);
+    }
+  }
+
+  .hero__foot {
+    grid-area: foot;
+    display: grid;
+    gap: 2rem;
+    align-items: end;
+    margin-top: clamp(1rem, 3vw, 2.5rem);
+  }
+  @media (min-width: 900px) {
+    .hero__foot {
+      grid-template-columns: minmax(0, 36rem) auto;
+      justify-content: space-between;
+    }
+  }
+  .hero__intro {
+    font-size: clamp(1.2rem, 1.6vw, 1.5rem);
+    line-height: 1.45;
+    max-width: 34ch;
+    animation: rise 900ms var(--ease-out) 1000ms backwards;
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    animation: rise 900ms var(--ease-out) 1120ms backwards;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+      filter: blur(6px);
+    }
+  }
+  @keyframes ping {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    70%,
+    100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__live::after {
+      display: none;
+    }
+  }
+</style>

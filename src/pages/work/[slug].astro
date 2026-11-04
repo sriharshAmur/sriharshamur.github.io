@@ -1,0 +1,269 @@
+---
+import Base from "../../layouts/Base.astro";
+import Cover from "../../components/Cover.astro";
+import { work, type Work } from "../../data/site";
+
+export function getStaticPaths() {
+  return work.map((item, i) => ({
+    params: { slug: item.slug },
+    props: { item, next: work[(i + 1) % work.length] },
+  }));
+}
+
+const { item, next } = Astro.props as { item: Work; next: Work };
+const image = item.cover.type === "image" ? item.cover.src : undefined;
+---
+
+<Base title={`${item.title} · Sri Harsh Amur`} description={item.summary} active="work" image={image} imageAlt={item.cover.type === "image" ? item.cover.alt : undefined}>
+  <article class="case">
+    <header class="wrap case__head">
+      <a class="case__back ui" href="/#work">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+        All work
+      </a>
+      <p class="case__meta ui"><span>{item.kind}</span><span>{item.year}</span></p>
+      <h1 class="case__title display" style={`view-transition-name:title-${item.slug}`}>{item.title}</h1>
+      <p class="case__tagline">{item.tagline}</p>
+      <div class="case__bar">
+        <ul class="tags" role="list">
+          {item.tools.map((t) => <li class="tag">{t}</li>)}
+        </ul>
+        <div class="case__links">
+          {
+            item.links.map((l, i) => (
+              <a class:list={["btn", { "btn--ghost": i > 0 }]} href={l.href} target={l.href.startsWith("/") ? undefined : "_blank"} rel="noopener">
+                {l.label}
+                <svg class="nudge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap case__cover">
+      <Cover item={item} vt eager />
+      <p class="case__caption muted">
+        {item.cover.type === "image"
+          ? "Screenshots use a fictional demo person, with made-up location history."
+          : "Product illustration, rather than a screenshot of the application."}
+      </p>
+    </div>
+
+    <div class="wrap case__body">
+      <section class="part">
+        <h2 class="part__label">The problem</h2>
+        <p class="part__lead" data-reveal>{item.problem}</p>
+      </section>
+      <section class="part">
+        <h2 class="part__label">What I did</h2>
+        <ol class="steps" role="list">
+          {
+            item.approach.map((a, i) => (
+              <li class="step" data-reveal style={`--i:${i}`}>
+                <span class="step__n" aria-hidden="true" />
+                <p>{a}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+      <section class="part">
+        <h2 class="part__label">How it turned out</h2>
+        <p class="part__lead" data-reveal>{item.outcome}</p>
+      </section>
+    </div>
+
+    {
+      item.gallery && (
+        <section class="wrap gallery" aria-label="Screens">
+          {item.gallery.map((g, i) => (
+            <figure class="shot" data-reveal style={`--i:${i % 2}`}>
+              <img src={g.src} alt={g.alt} loading="lazy" decoding="async" width="1600" height="1000" />
+              <figcaption class="muted">{g.caption}</figcaption>
+            </figure>
+          ))}
+        </section>
+      )
+    }
+
+    <nav class="wrap next" aria-label="Next project">
+      <a class="next__link" href={`/work/${next.slug}`}>
+        <span class="next__label ui muted">Next project</span>
+        <span class="next__title stretch" data-stretch>{next.title}</span>
+      </a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .case {
+    padding-top: 7.5rem;
+  }
+  .case__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    padding: 0.4rem 0.8rem 0.4rem 0.6rem;
+    margin-left: -0.6rem;
+    border-radius: 999px;
+    transition: background-color var(--t-quick), transform var(--t-press) var(--ease-out);
+  }
+  .case__back:active {
+    transform: scale(0.97);
+  }
+  .case__back svg {
+    transition: transform var(--t-base) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .case__back:hover {
+      background: var(--paper-2);
+    }
+    .case__back:hover svg {
+      transform: translateX(-3px);
+    }
+  }
+  .case__meta {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    animation: rise 700ms var(--ease-out) 120ms backwards;
+  }
+  .case__title {
+    font-size: clamp(2.5rem, 9vw, 8rem);
+    margin-block: 1rem;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .case__tagline {
+    font-size: clamp(1.35rem, 2.4vw, 2rem);
+    font-style: italic;
+    line-height: 1.3;
+    max-width: 30ch;
+    animation: rise 700ms var(--ease-out) 200ms backwards;
+  }
+  .case__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    animation: rise 700ms var(--ease-out) 280ms backwards;
+  }
+  .case__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .case__cover {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  .case__cover :global(.cover) {
+    border-radius: var(--radius-l);
+    aspect-ratio: 16 / 9;
+  }
+  .case__caption {
+    margin-top: 0.8rem;
+    font-size: 1rem;
+  }
+  .case__body {
+    display: grid;
+    gap: clamp(3.5rem, 8vw, 6rem);
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+  .part {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 900px) {
+    .part {
+      grid-template-columns: 16rem minmax(0, 46rem);
+      gap: 3rem;
+    }
+    .part__label {
+      position: sticky;
+      top: 6.5rem;
+      align-self: start;
+    }
+  }
+  .part__label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--delft);
+  }
+  .part__lead {
+    font-size: clamp(1.3rem, 2.1vw, 1.75rem);
+    line-height: 1.45;
+  }
+  .steps {
+    display: grid;
+    gap: 1.6rem;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 1.6rem 1fr;
+    gap: 0.6rem;
+  }
+  .step__n {
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-top: 0.62em;
+    border-radius: 50%;
+    background: var(--marigold);
+  }
+  .gallery {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  @media (min-width: 760px) {
+    .gallery {
+      grid-template-columns: 1fr 1fr;
+    }
+    .shot:nth-child(even) {
+      margin-top: 4rem;
+    }
+  }
+  .shot img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-m);
+    box-shadow: 0 30px 60px -35px rgb(15 18 38 / 0.6);
+  }
+  .shot figcaption {
+    margin-top: 0.8rem;
+    font-size: 1rem;
+  }
+  .next {
+    padding-block: clamp(5rem, 12vw, 9rem) 1rem;
+  }
+  .next__link {
+    display: grid;
+    gap: 0.75rem;
+    text-decoration: none;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .next__title {
+    font-size: clamp(2.4rem, 8vw, 6.5rem);
+    transition: font-stretch 1100ms var(--ease-out), color var(--t-base) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .next__link:hover .next__title {
+      color: var(--delft);
+      font-stretch: 130%;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+      filter: blur(6px);
+    }
+  }
+</style>

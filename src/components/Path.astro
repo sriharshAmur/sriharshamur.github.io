@@ -1,0 +1,180 @@
+---
+// The route so far, in order. Years are real markers here: this is a sequence.
+const stops = [
+  {
+    year: "2015",
+    place: "New Delhi",
+    title: "Navy Children School",
+    text: "Where the curiosity about computers started.",
+  },
+  {
+    year: "2019",
+    place: "Enschede",
+    title: "University of Twente",
+    text: "Moved to the Netherlands to study Computer Science.",
+  },
+  {
+    year: "2021",
+    place: "Hardenberg",
+    title: "AppsForTableau, Infotopics",
+    text: "Started building Tableau and Power BI extensions, and grew into owning three of them as Product Owner.",
+  },
+  {
+    year: "2024",
+    place: "San Diego",
+    title: "Tableau Conference",
+    text: "Spoke on stage about VizExtensions.",
+  },
+  {
+    year: "2024",
+    place: "Enschede",
+    title: "Just Eat Takeaway.com",
+    text: "Joined as a full-stack developer, working across React front ends and Kotlin services.",
+  },
+  {
+    year: "Now",
+    place: "Enschede",
+    title: "Building in the open",
+    text: "Shipping side projects like Long Exposure alongside the day job.",
+    now: true,
+  },
+];
+---
+
+<section class="section path" id="path" aria-labelledby="path-title">
+  <div class="wrap">
+    <h2 class="stretch" id="path-title" data-stretch>The route so far</h2>
+
+    <div class="route" data-route>
+      <span class="route__rail" aria-hidden="true"><span class="route__fill" data-route-fill></span></span>
+      <ol class="route__list" role="list">
+      {
+        stops.map((s) => (
+          <li class:list={["stop", { "stop--now": s.now }]} data-stop>
+            <span class="stop__dot" aria-hidden="true" />
+            <span class="stop__year display">{s.year}</span>
+            <div class="stop__body">
+              <h3 class="stop__title">{s.title}</h3>
+              <p class="stop__place ui">{s.place}</p>
+              <p class="stop__text muted">{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .route {
+    position: relative;
+    margin-top: clamp(3rem, 7vw, 5rem);
+    --rail-x: 0.55rem;
+  }
+  @media (min-width: 760px) {
+    .route {
+      --rail-x: 11.5rem;
+    }
+  }
+  .route__rail {
+    position: absolute;
+    left: var(--rail-x);
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .route__fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(var(--marigold), var(--delft));
+    transform-origin: 50% 0;
+    transform: scaleY(var(--progress, 0));
+  }
+  .stop {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+    padding: 0 0 clamp(2.5rem, 5vw, 3.75rem) 2.25rem;
+  }
+  @media (min-width: 760px) {
+    .stop {
+      grid-template-columns: 9.5rem 1fr;
+      column-gap: 4rem;
+      padding-left: 0;
+    }
+  }
+  .stop:last-child {
+    padding-bottom: 0;
+  }
+  .stop__dot {
+    position: absolute;
+    left: var(--rail-x);
+    top: 0.55rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-left: -0.45rem;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: inset 0 0 0 2px var(--line);
+    transform: scale(0.7);
+    transition: transform 500ms var(--ease-out), background-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+  }
+  .stop.is-past .stop__dot {
+    transform: scale(1);
+    background: var(--marigold);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--marigold) 25%, transparent);
+  }
+  .stop--now.is-past .stop__dot {
+    background: #2fb36a;
+    box-shadow: 0 0 0 5px rgb(47 179 106 / 0.22);
+  }
+  .stop__year {
+    font-size: clamp(2rem, 4.5vw, 3.4rem);
+    line-height: 1;
+    font-stretch: 70%;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    transition: font-stretch 800ms var(--ease-out), color 400ms var(--ease-out);
+  }
+  @media (min-width: 760px) {
+    .stop__year {
+      text-align: right;
+    }
+  }
+  .stop.is-past .stop__year {
+    font-stretch: 110%;
+    color: var(--ink);
+  }
+  .stop__body {
+    max-width: 38rem;
+  }
+  :global(.js) .stop__body {
+    opacity: 1;
+    transform: translateX(-6px);
+    transition: opacity 500ms var(--ease-out), transform 600ms var(--ease-out);
+  }
+  .stop.is-past .stop__body {
+    opacity: 1;
+    transform: none;
+  }
+  .stop__title {
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  }
+  .stop__place {
+    font-size: 0.9rem;
+    color: var(--delft);
+    margin-block: 0.2rem 0.5rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .stop__body {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

@@ -1,67 +1,85 @@
 ---
-import { Icon } from "astro-icon";
+import { profile } from "../data/site";
 ---
 
-<div id="about" class="md:my-20 md:w-10/12 md:mx-auto mb-10">
-  <div class="h-full flex flex-col">
-    <div
-      class="text-4xl text-center md:text-left md:text-6xl font-bold mb-16 md:mb-24"
-    >
-      About
-    </div>
-    <div
-      class="flex flex-col md:flex-row items-center justify-between px-2 md:px-0"
-    >
-      <div class="mb-12 md:mb-0 md:mr-4">
-        <div class="dark:rounded dark:bg-gray-300 dark:w-fit dark:p-1">
-          <img
-            src="/assets/web-development.png"
-            alt="Web Development"
-            width={50}
-          />
-        </div>
-        <div class="my-4 font-bold text-2xl">Web Developer</div>
-        <div class="text-justify">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-          voluptatem corporis impedit deleniti incidunt autem velit atque vel
-          dignissimos obcaecati, eos asperiores non perspiciatis explicabo
-          doloribus, consequatur sit recusandae adipisci?
-        </div>
+<section class="section about" id="about" aria-labelledby="about-title">
+  <div class="wrap about__wrap">
+    <figure class="about__photo" data-reveal>
+      <img src="/img/portrait-cv.png" alt={`Portrait of ${profile.name}`} width="250" height="250" loading="lazy" />
+    </figure>
+    <div class="about__text">
+      <h2 class="stretch" id="about-title" data-stretch>Hi, I'm Sri Harsh</h2>
+      <div class="about__body">
+        <p data-reveal style="--i:0">
+          I grew up in New Delhi and came to Enschede in 2019 to study at the University of Twente. The Netherlands
+          stuck, and so did building things for the web.
+        </p>
+        <p data-reveal style="--i:1">
+          My work sits where interfaces meet systems. I like the front end enough to sweat an easing curve, and the
+          back end enough to care what happens when a Kafka consumer falls behind. Working as a Product Owner
+          taught me to ask whether something is worth building before asking how.
+        </p>
+        <p data-reveal style="--i:2">
+          Outside work I build side projects to scratch my own itches. The latest turns a decade of Google Maps history
+          into a story you can scroll through.
+        </p>
       </div>
-
-      <div class="mb-12 md:mb-0 md:mr-4">
-        <div class="dark:rounded dark:bg-gray-300 dark:w-fit dark:p-1">
-          <img
-            src="/assets/extension.png"
-            alt="Extension Developer"
-            width={50}
-          />
-        </div>
-        <div class="my-4 font-bold text-2xl">Extension Developer</div>
-        <div class="text-justify">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-          voluptatem corporis impedit deleniti incidunt autem velit atque vel
-          dignissimos obcaecati, eos asperiores non perspiciatis explicabo
-          doloribus, consequatur sit recusandae adipisci?
-        </div>
-      </div>
-
-      <div class="mb-12 md:mb-0 md:mr-4">
-        <div class="dark:rounded dark:bg-gray-300 dark:w-fit dark:p-1">
-          <img
-            src="/assets/study.png"
-            alt="Bachelors in Computer Science"
-            width={50}
-          />
-        </div>
-        <div class="my-4 font-bold text-2xl">Student</div>
-        <div class="text-justify">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-          voluptatem corporis impedit deleniti incidunt autem velit atque vel
-          dignissimos obcaecati, eos asperiores non perspiciatis explicabo
-          doloribus, consequatur sit recusandae adipisci?
-        </div>
+      <div class="about__cta" data-reveal style="--i:3">
+        <a class="btn" href="/cv">Read the full CV</a>
+        <a class="btn btn--ghost" href="#contact">Get in touch</a>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+<style>
+  .about__wrap {
+    display: grid;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+  @media (min-width: 900px) {
+    .about__wrap {
+      grid-template-columns: minmax(0, 0.8fr) 1.4fr;
+      align-items: start;
+    }
+  }
+  .about__photo {
+    position: relative;
+    max-width: 24rem;
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    background: var(--marigold);
+    rotate: -3deg;
+    box-shadow: 0 30px 60px -30px rgb(15 18 38 / 0.5);
+    transition: rotate 700ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .about__photo:hover {
+      rotate: 0deg;
+      transform: scale(1.02);
+    }
+  }
+  @media (min-width: 900px) {
+    .about__photo {
+      position: sticky;
+      top: 7rem;
+    }
+  }
+  .about__photo img {
+    width: 100%;
+    height: auto;
+  }
+  .about__body {
+    display: grid;
+    gap: 1.2rem;
+    margin-top: 2rem;
+    max-width: 38rem;
+    font-size: clamp(1.15rem, 1.4vw, 1.3rem);
+  }
+  .about__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+</style>
