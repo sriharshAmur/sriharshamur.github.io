@@ -71,6 +71,19 @@ export default function ContactForm() {
     }
   };
 
+  if (!import.meta.env.PUBLIC_FORMBOLD_URL) {
+    return (
+      <div className="flex-1 py-6 px-10 bg-[#212121] mt-8 md:mt-0 text-white flex items-center">
+        <p>
+          Get in touch by email: {" "}
+          <a className="underline" href="mailto:sriharshamur@gmail.com">
+            sriharshamur@gmail.com
+          </a>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1  py-6 px-10 bg-[#212121] mt-8 md:mt-0 text-white">
       {status === "Sent" ? (
