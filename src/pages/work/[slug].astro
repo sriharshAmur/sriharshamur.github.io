@@ -69,6 +69,21 @@ const image = item.cover.type === "image" ? item.cover.src.src : undefined;
           }
         </ol>
       </section>
+      {
+        item.polish && (
+          <section class="part">
+            <h2 class="part__label">Making it fast and sturdy</h2>
+            <ol class="steps" role="list">
+              {item.polish.map((a, i) => (
+                <li class="step" data-reveal style={`--i:${i}`}>
+                  <span class="step__n" aria-hidden="true" />
+                  <p>{a}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )
+      }
       <section class="part">
         <h2 class="part__label">How it turned out</h2>
         <p class="part__lead" data-reveal>{item.outcome}</p>

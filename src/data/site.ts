@@ -240,6 +240,8 @@ export type Work = {
   links: { label: string; href: string }[];
   problem: string;
   approach: string[];
+  /** Later work on speed, robustness and finish, shown as its own section. */
+  polish?: string[];
   outcome: string;
   gallery?: { src: ImageMetadata; alt: string; caption: string }[];
 };
@@ -275,6 +277,13 @@ export const work: Work[] = [
       "Story rings play your year, then each month. Question cards answer one thing each in large type, with small hand-built charts underneath, and every bar opens the orders behind it.",
       "Findings are pinned up like kitchen tickets, shown only when your history supports them, next to an order type (night owl, regular, explorer) and a guess at your next order with its honest hit rate.",
     ],
+    polish: [
+      "The app used to ship as one 885 KB script. Now each page loads its own code once your data is ready, so the start page downloads about 195 KB compressed instead of 280 KB.",
+      "Screenshots moved from JPEG to WebP at the size they are shown, from 655 KB down to 138 KB. Build files are cached for a year, so a second visit only fetches the page itself.",
+      "The animations stayed, but nothing waits more than 150 ms to start. On a simulated mid-range phone, the Lighthouse score went from 84 to 91 and the first load from 754 KB to 423 KB.",
+      "The story player works from the keyboard wherever focus is, Escape returns you to the ring you opened, and holding to pause no longer skips a slide.",
+      "“Today” and “yesterday” now count calendar days in Amsterdam time. Every push runs the type check, 47 tests and both builds before Cloudflare gets the new version.",
+    ],
     outcome:
       "A live demo with a made-up person's year of orders, and a tool I run on my own. Thuisbezorgd keeps about a year of history, so Munch is designed around a year: weeks rather than months, and months as stories.",
     gallery: [
@@ -309,6 +318,13 @@ export const work: Work[] = [
       "Homes are inferred from where you slept; favourite places, travel modes and weekly rhythms come out of the same pass.",
       "Reverse geocoding works offline against 31,000 world cities from GeoNames. An optional OpenStreetMap lookup sends selected coordinates to name homes and favourite places; you can skip it.",
       "The story is a single scroll: MapLibre GL for the map and hand-built SVG charts for everything else.",
+    ],
+    polish: [
+      "The opening text used to wait for the map style and its first tiles. Now it is written straight away, and MapLibre only loads once a story opens.",
+      "MapLibre and the fonts are served from my own domain instead of unpkg and Google Fonts, so nothing from another site blocks the first paint. The preview image is AVIF, 18 KB on phones instead of 185 KB.",
+      "The calendar's 3,900 day squares are built as one piece of markup per year, with three event listeners on the wall instead of three on every square.",
+      "On a simulated mid-range phone, the demo's Lighthouse score went from 43 to between 75 and 90, and what it downloads went from 1.4 MB to 0.7 MB.",
+      "iPhone exports now work alongside Android ones, and timelines with no trips, no time abroad or only a few recorded months no longer break the story. Every push checks that the iPhone and Android versions of the same history tell the same story.",
     ],
     outcome:
       "A live way to look back at your own years while keeping the raw file on your device. Drop in your file and watch the map light up one year at a time, then click any day in the calendar to replay it hour by hour.",
