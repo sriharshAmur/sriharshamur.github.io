@@ -284,7 +284,7 @@ export const work: Work[] = [
     outcome:
       "It finally feels like mine: a plain notebook I open without thinking, with the analysis one step away instead of in my face. The design decisions, the AI's short character brief and the privacy rules are written down next to the code, so the next change keeps all three.",
     gallery: [
-      { src: journalExplore, alt: "The Explore page: a strip of monthly bars, reflection lines with their dates, and two columns for what helped and what was hard", caption: "The look back: how often you wrote, what the time held, and what helped and what was hard side by side." },
+      { src: journalExplore, alt: "The Explore page: a row of weekly marks sized by how much was written, reflection lines with their dates, and two columns for what helped and what was hard", caption: "The look back: one mark per week, what the time held, and what helped and what was hard side by side." },
       { src: journalJournal, alt: "The Journal page: search, plain filters, and entries listed under month headings with the day number in the margin", caption: "Entries and conversations in one chronology, with the months that had nothing written shown as gaps." },
       { src: journalMemory, alt: "The Memory page: short sentences the journal remembers, each with its date, sources and a Change link", caption: "What the journal remembers, each sentence marked as your words or a reading, with its sources one click away." },
       { src: journalLanding, alt: "The landing page: a large serif headline on warm paper above a short introduction and a demo button", caption: "The public page is the same notebook seen from the doorway, with a browser-only demo." },
