@@ -1,4 +1,5 @@
 ---
+import { Picture } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import Cover from "../../components/Cover.astro";
 import { work, type Work } from "../../data/site";
@@ -11,7 +12,7 @@ export function getStaticPaths() {
 }
 
 const { item, next } = Astro.props as { item: Work; next: Work };
-const image = item.cover.type === "image" ? item.cover.src : undefined;
+const image = item.cover.type === "image" ? item.cover.src.src : undefined;
 ---
 
 <Base title={`${item.title} · Sri Harsh Amur`} description={item.summary} active="work" image={image} imageAlt={item.cover.type === "image" ? item.cover.alt : undefined}>
@@ -42,7 +43,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
     </header>
 
     <div class="wrap case__cover">
-      <Cover item={item} vt eager />
+      <Cover item={item} vt eager sizes="min(100vw, 96rem)" />
       <p class="case__caption muted">
         {item.cover.type === "image"
           ? item.coverNote ?? "Project screenshot."
@@ -79,7 +80,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
         <section class="wrap gallery" aria-label="Screens">
           {item.gallery.map((g, i) => (
             <figure class="shot" data-reveal style={`--i:${i % 2}`}>
-              <img src={g.src} alt={g.alt} loading="lazy" decoding="async" width="1600" height="1000" />
+              <Picture src={g.src} formats={["avif", "webp"]} widths={[480, 800, 1200, 1600]} sizes="(min-width: 760px) 50vw, 100vw" alt={g.alt} />
               <figcaption class="muted">{g.caption}</figcaption>
             </figure>
           ))}
@@ -132,7 +133,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
     margin-top: clamp(2rem, 5vw, 3.5rem);
     color: var(--ink-2);
     font-size: 0.95rem;
-    animation: rise 700ms var(--ease-out) 120ms backwards;
+    animation: rise 700ms var(--ease-out) 40ms backwards;
   }
   .case__title {
     font-size: clamp(2.5rem, 9vw, 8rem);
@@ -145,7 +146,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
     font-style: italic;
     line-height: 1.3;
     max-width: 30ch;
-    animation: rise 700ms var(--ease-out) 200ms backwards;
+    animation: rise 700ms var(--ease-out) 80ms backwards;
   }
   .case__bar {
     display: flex;
@@ -154,7 +155,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
     align-items: center;
     gap: 1.5rem;
     margin-top: 2.5rem;
-    animation: rise 700ms var(--ease-out) 280ms backwards;
+    animation: rise 700ms var(--ease-out) 120ms backwards;
   }
   .case__links {
     display: flex;

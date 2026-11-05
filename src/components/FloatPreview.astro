@@ -16,7 +16,7 @@ const { items } = Astro.props;
     {
       items.map((item, i) => (
         <div class="float__slide" data-slide={i}>
-          <Cover item={item} />
+          <Cover item={item} sizes="26rem" />
         </div>
       ))
     }

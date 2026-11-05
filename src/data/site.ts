@@ -1,6 +1,19 @@
 // Single source of truth for everything the site says about Sri Harsh.
 // Pages (home, CV, case studies) all read from here, so edit copy in one place.
 
+import type { ImageMetadata } from "astro";
+import appsForTableau from "../assets/brands/apps-for-tableau.png";
+import munchHero from "../assets/work/munch/hero.jpg";
+import munchStory from "../assets/work/munch/story.jpg";
+import munchCards from "../assets/work/munch/cards.jpg";
+import munchNoticed from "../assets/work/munch/noticed.jpg";
+import munchPlaces from "../assets/work/munch/places.jpg";
+import longExposureHero from "../assets/work/long-exposure/hero.jpg";
+import longExposureHomes from "../assets/work/long-exposure/homes.jpg";
+import longExposurePlaces from "../assets/work/long-exposure/places.jpg";
+import longExposureYears from "../assets/work/long-exposure/years.jpg";
+import longExposureDay from "../assets/work/long-exposure/day.jpg";
+
 export const profile = {
   name: "Sri Harsh Amur",
   firstName: "Sri Harsh",
@@ -26,9 +39,9 @@ export type Achievement = {
   highlight?: string;
 };
 
-export const companyLogos = {
+export const companyLogos: Record<"jet" | "appsForTableau", string | ImageMetadata> = {
   jet: "/img/brands/jet.svg",
-  appsForTableau: "/img/brands/apps-for-tableau.png",
+  appsForTableau,
 };
 
 export type Role = {
@@ -218,7 +231,7 @@ export type Work = {
   tagline: string;
   summary: string;
   tools: string[];
-  cover: { type: "image"; src: string; alt: string } | { type: "mock"; variant: "viz" | "jobs" | "chat" };
+  cover: { type: "image"; src: ImageMetadata; alt: string } | { type: "mock"; variant: "viz" | "jobs" | "chat" };
   tint: string;
   /** Shown large on the home page, with a direct link to the live app. */
   featured?: boolean;
@@ -228,7 +241,7 @@ export type Work = {
   problem: string;
   approach: string[];
   outcome: string;
-  gallery?: { src: string; alt: string; caption: string }[];
+  gallery?: { src: ImageMetadata; alt: string; caption: string }[];
 };
 
 export const work: Work[] = [
@@ -244,7 +257,7 @@ export const work: Work[] = [
     tools: ["TypeScript", "Bun", "React 19", "Vite", "TanStack Router", "Motion", "Tailwind", "Cloudflare Workers"],
     cover: {
       type: "image",
-      src: "/img/work/munch/hero.jpg",
+      src: munchHero,
       alt: "Munch's home page: a row of story rings above the headline “87 orders since November 2025”",
     },
     coverNote: "Screenshots use a fictional demo person, with made-up orders from made-up restaurants.",
@@ -265,10 +278,10 @@ export const work: Work[] = [
     outcome:
       "A live demo with a made-up person's year of orders, and a tool I run on my own. Thuisbezorgd keeps about a year of history, so Munch is designed around a year: weeks rather than months, and months as stories.",
     gallery: [
-      { src: "/img/work/munch/story.jpg", alt: "A story slide naming the demo person's number one restaurant of the year", caption: "Your year plays as a story, then each month gets one of its own." },
-      { src: "/img/work/munch/cards.jpg", alt: "Cards answering when the demo person orders and where from", caption: "One question per card, answered in large type with the evidence underneath." },
-      { src: "/img/work/munch/noticed.jpg", alt: "Small findings shown as kitchen tickets hanging from a rail", caption: "Things we noticed, pinned up like tickets in a kitchen." },
-      { src: "/img/work/munch/places.jpg", alt: "A table of restaurants with a status and a year of activity for each", caption: "Every restaurant gets a status, a year of activity and a page of its own." },
+      { src: munchStory, alt: "A story slide naming the demo person's number one restaurant of the year", caption: "Your year plays as a story, then each month gets one of its own." },
+      { src: munchCards, alt: "Cards answering when the demo person orders and where from", caption: "One question per card, answered in large type with the evidence underneath." },
+      { src: munchNoticed, alt: "Small findings shown as kitchen tickets hanging from a rail", caption: "Things we noticed, pinned up like tickets in a kitchen." },
+      { src: munchPlaces, alt: "A table of restaurants with a status and a year of activity for each", caption: "Every restaurant gets a status, a year of activity and a page of its own." },
     ],
   },
   {
@@ -281,7 +294,7 @@ export const work: Work[] = [
     summary:
       "A browser-only story built from a Google Maps Timeline export: a decade of location history glowing on a night map, with the years unfolding around it.",
     tools: ["JavaScript", "Web Workers", "MapLibre GL", "SVG", "Cloudflare Workers"],
-    cover: { type: "image", src: "/img/work/long-exposure/hero.jpg", alt: "Years of location history glowing as points on a dark world map" },
+    cover: { type: "image", src: longExposureHero, alt: "Years of location history glowing as points on a dark world map" },
     coverNote: "Screenshots use a fictional demo person, with made-up location history.",
     tint: "#1d1f22",
     links: [
@@ -300,10 +313,10 @@ export const work: Work[] = [
     outcome:
       "A live way to look back at your own years while keeping the raw file on your device. Drop in your file and watch the map light up one year at a time, then click any day in the calendar to replay it hour by hour.",
     gallery: [
-      { src: "/img/work/long-exposure/homes.jpg", alt: "Panel describing life around each home", caption: "Life around each home, found from where you slept." },
-      { src: "/img/work/long-exposure/places.jpg", alt: "Panel listing most visited places", caption: "Your places, with habits like “usually Saturdays around 11:00”." },
-      { src: "/img/work/long-exposure/years.jpg", alt: "Year by year summary view", caption: "Pick any year to see where home was and where you went." },
-      { src: "/img/work/long-exposure/day.jpg", alt: "A single day replayed on the map", caption: "Every day is one square. Click it to replay that day." },
+      { src: longExposureHomes, alt: "Panel describing life around each home", caption: "Life around each home, found from where you slept." },
+      { src: longExposurePlaces, alt: "Panel listing most visited places", caption: "Your places, with habits like “usually Saturdays around 11:00”." },
+      { src: longExposureYears, alt: "Year by year summary view", caption: "Pick any year to see where home was and where you went." },
+      { src: longExposureDay, alt: "A single day replayed on the map", caption: "Every day is one square. Click it to replay that day." },
     ],
   },
   {

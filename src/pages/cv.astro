@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import CompanyLogo from "../components/CompanyLogo.astro";
 import CvHighlight from "../components/CvHighlight.astro";
@@ -81,7 +82,7 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
         <div class="projects">
           {selectedProjects.map((project, i) => (
             <a class="project" data-reveal style={`--i:${i * 2}`} href={`https://sriharsh.com/${project.slug}/`}>
-              <div class="project-shot"><img src={project.cover.src} alt="" loading="lazy" width="1600" height="1000" /></div>
+              <div class="project-shot"><Image src={project.cover.src} alt="" width={800} format="webp" /></div>
               <div class="project-body">
                 <div class="project-title">
                   <h3>{project.title}</h3>

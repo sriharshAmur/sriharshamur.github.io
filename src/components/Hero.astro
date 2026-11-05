@@ -1,5 +1,7 @@
 ---
+import { Picture } from "astro:assets";
 import CompanyLogo from "./CompanyLogo.astro";
+import portrait from "../assets/portrait.png";
 import { profile, experience } from "../data/site";
 const current = experience[0];
 const split = (word: string) => [...word];
@@ -35,7 +37,7 @@ let n = 0;
 
     <div class="hero__portrait" data-parallax data-cursor="nerd">
       <div class="hero__disc" data-depth="0.35" aria-hidden="true"></div>
-      <img class="hero__photo" data-depth="0.8" src="/img/portrait.png" alt="" width="460" height="460" fetchpriority="high" />
+      <Picture class="hero__photo" data-depth="0.8" src={portrait} formats={["avif", "webp"]} widths={[288, 460]} sizes="(min-width: 900px) 26rem, min(56vw, 18rem)" alt="" loading="eager" fetchpriority="high" />
       <div class="hello" data-hello>
         <button class="hello__button" type="button" data-hello-button aria-label="Say hello to the little dot">
           <span class="hello__face" aria-hidden="true">
@@ -98,7 +100,7 @@ let n = 0;
     gap: 0.6rem;
     font-size: 0.95rem;
     color: var(--ink-2);
-    animation: rise 800ms var(--ease-out) 650ms backwards;
+    animation: rise 700ms var(--ease-out) 100ms backwards;
   }
   .hero__employer { display: inline-flex; align-items: center; gap: 0.5rem; }
   .hero__live {
@@ -167,7 +169,7 @@ let n = 0;
     translate: -50% 0;
     transform-origin: 50% 85%;
     animation: letter-in 1300ms var(--ease-out) backwards;
-    animation-delay: calc(100ms + var(--i) * 40ms);
+    animation-delay: calc(var(--i) * 28ms);
   }
   .hero__space {
     display: inline-block;
@@ -270,14 +272,14 @@ let n = 0;
   .hero__disc {
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--marigold) 70%, #fff) 0%, var(--marigold) 55%);
-    animation: disc-in 1100ms var(--ease-out) 200ms backwards;
+    animation: disc-in 1000ms var(--ease-out) 30ms backwards;
   }
   .hero__photo {
     width: 100%;
     height: 100%;
     object-fit: contain;
     clip-path: inset(-20% 0 0 0 round 0 0 50% 50%);
-    animation: photo-in 900ms var(--ease-out) 420ms backwards;
+    animation: photo-in 800ms var(--ease-out) 80ms backwards;
   }
   @keyframes disc-in {
     from {
@@ -309,18 +311,25 @@ let n = 0;
     font-size: clamp(1.2rem, 1.6vw, 1.5rem);
     line-height: 1.45;
     max-width: 34ch;
-    animation: rise 800ms var(--ease-out) 750ms backwards;
+    /* The intro is the largest text on screen, so it never starts invisible: it settles in from 0.6. */
+    animation: settle 700ms var(--ease-out) 120ms backwards;
   }
   .hero__cta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    animation: rise 800ms var(--ease-out) 850ms backwards;
+    animation: rise 700ms var(--ease-out) 160ms backwards;
   }
 
   @keyframes rise {
     from {
       opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+  @keyframes settle {
+    from {
+      opacity: 0.6;
       transform: translateY(14px);
     }
   }

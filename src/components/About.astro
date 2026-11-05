@@ -1,11 +1,13 @@
 ---
+import { Picture } from "astro:assets";
 import { profile } from "../data/site";
+import portrait from "../assets/portrait.png";
 ---
 
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="wrap about__wrap">
     <figure class="about__photo" data-reveal data-cursor="nerd">
-      <img src="/img/portrait.png" alt={`Portrait of ${profile.name}`} width="460" height="460" loading="lazy" decoding="async" />
+      <Picture src={portrait} formats={["avif", "webp"]} widths={[288, 460]} sizes="min(24rem, 100vw)" alt={`Portrait of ${profile.name}`} />
     </figure>
     <div class="about__text">
       <h2 class="stretch about__title" id="about-title" data-stretch><span>Hi, I'm</span> <span>Sri Harsh</span></h2>

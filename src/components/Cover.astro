@@ -1,13 +1,16 @@
 ---
 // Project artwork. Real screenshots when there are any, otherwise a small
 // hand-built illustration of the product so every project has a face.
+import { Picture } from "astro:assets";
 import type { Work } from "../data/site";
 export interface Props {
   item: Work;
   vt?: boolean;
   eager?: boolean;
+  /** Rendered width of the cover, for picking the image size. */
+  sizes?: string;
 }
-const { item, vt = false, eager = false } = Astro.props;
+const { item, vt = false, eager = false, sizes = "(min-width: 900px) 60vw, 100vw" } = Astro.props;
 const cover = item.cover;
 const style = `--tint:${item.tint};${vt ? `view-transition-name:cover-${item.slug};` : ""}`;
 const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
@@ -16,7 +19,7 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
 <div class:list={["cover", cover.type === "mock" && `cover--${cover.variant}`]} style={style}>
   {
     cover.type === "image" ? (
-      <img src={cover.src} alt={cover.alt} loading={eager ? "eager" : "lazy"} decoding="async" width="1600" height="1000" />
+      <Picture src={cover.src} formats={["avif", "webp"]} widths={[480, 800, 1200, 1600]} sizes={sizes} alt={cover.alt} loading={eager ? "eager" : "lazy"} />
     ) : cover.variant === "viz" ? (
       <div class="mock mock--viz" role="img" aria-label="Illustration of a dashboard extension with a bar chart">
         <div class="mock__chrome"><i></i><i></i><i></i></div>

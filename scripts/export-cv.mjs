@@ -23,11 +23,13 @@ if (!existsSync(source)) throw new Error("Build the site first with npm run buil
 if (!chrome) throw new Error("Install Chrome/Chromium or set CHROME_PATH to its executable.");
 
 const embedFonts = (css) => css.replace(
-  /url\(["']?(\/fonts\/[^)"']+)["']?\)/g,
+  /url\(["']?(\/_astro\/[^)"']+\.woff2)["']?\)/g,
   (_, asset) => `url(data:font/woff2;base64,${readFileSync(join(dist, asset)).toString("base64")})`,
 );
 
-const html = readFileSync(source, "utf8")
+const mimes = { svg: "image/svg+xml", jpg: "image/jpeg", png: "image/png", webp: "image/webp", avif: "image/avif" };
+
+const html = embedFonts(readFileSync(source, "utf8"))
   .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "")
   .replace(/<link\b[^>]*>/g, (tag) => {
     const href = tag.match(/href="([^"]+)"/)?.[1];
@@ -36,8 +38,12 @@ const html = readFileSync(source, "utf8")
     }
     return tag.includes('rel="preload"') || tag.includes('rel="icon"') ? "" : tag;
   })
+  // Only the inlined fallback <img> is kept; responsive sources would point at the live site.
+  .replace(/<source\b[^>]*>/g, "")
+  .replace(/\s(?:srcset|sizes)="[^"]*"/g, "")
   .replace(/(<img\b[^>]*\bsrc=")(\/[^"]+)(")/g, (_, before, asset, after) => {
-    const mime = asset.endsWith(".svg") ? "image/svg+xml" : asset.endsWith(".jpg") ? "image/jpeg" : "image/png";
+    const mime = mimes[asset.split(".").pop()];
+    if (!mime) throw new Error(`Unknown image type: ${asset}`);
     return `${before}data:${mime};base64,${readFileSync(join(dist, asset)).toString("base64")}${after}`;
   })
   .replace("<head>", '<head><base href="https://sriharsh.com/">')

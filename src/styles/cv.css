@@ -247,7 +247,12 @@ body[data-page="cv"] { font-family: var(--sans); background: var(--paper); }
 .print-url { display: none; }
 
 /* Motion: one moment per section, and nothing hidden without JavaScript. */
+/* The header is on screen at load, so it animates in CSS from first paint rather than
+   waiting for the reveal script, and starts at 0.6 so it is readable straight away. */
+.cv .cv-head [data-reveal] { opacity: 1; transform: none; filter: none; }
 @media (prefers-reduced-motion: no-preference) {
+  .cv .cv-head [data-reveal] { animation: cv-head-in 600ms var(--ease-out) calc(var(--i, 0) * 40ms) backwards; }
+  @keyframes cv-head-in { from { opacity: 0.6; transform: translateY(12px); } }
   .cv-highlight {
     background: linear-gradient(var(--accent-soft), var(--accent-soft)) no-repeat 0 0 / 100% 100%;
     transition: background-size 900ms var(--ease-out) 350ms;
