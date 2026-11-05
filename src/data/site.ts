@@ -13,6 +13,11 @@ import longExposureHomes from "../assets/work/long-exposure/homes.jpg";
 import longExposurePlaces from "../assets/work/long-exposure/places.jpg";
 import longExposureYears from "../assets/work/long-exposure/years.jpg";
 import longExposureDay from "../assets/work/long-exposure/day.jpg";
+import journalHero from "../assets/work/journal/hero.jpg";
+import journalExplore from "../assets/work/journal/explore.jpg";
+import journalJournal from "../assets/work/journal/journal.jpg";
+import journalMemory from "../assets/work/journal/memory.jpg";
+import journalLanding from "../assets/work/journal/landing.jpg";
 
 export const profile = {
   name: "Sri Harsh Amur",
@@ -247,6 +252,44 @@ export type Work = {
 };
 
 export const work: Work[] = [
+  {
+    slug: "journal",
+    title: "Journal",
+    kind: "Personal project",
+    year: "2026",
+    featured: true,
+    tagline: "A plain place to write, that remembers where you've been.",
+    summary:
+      "A journal that looks like a notebook rather than a product: one page to write on, a look back over your months, and an AI that only ever answers with your own words as its sources. Built on Cloudflare Workers and D1, behind Cloudflare Access for the real one.",
+    tools: ["TypeScript", "React 19", "Vite", "Hono", "Cloudflare Workers", "D1", "R2", "Zod"],
+    cover: {
+      type: "image",
+      src: journalHero,
+      alt: "Journal's Write page: the date, a small toolbar, and a short entry typed straight onto warm paper",
+    },
+    coverNote: "Screenshots show the local sandbox's fictional entries, never a real journal.",
+    tint: "#1b1a18",
+    links: [
+      { label: "Try the demo", href: "https://journal.sriharsh.com/demo" },
+    ],
+    problem:
+      "Most journaling apps feel like software: forms, streaks, scores, a dashboard of your own life. I wanted a place that felt safe to be honest in and worth coming back to, where an AI could help me notice patterns without ever putting words in my mouth. My first design went the other way and overshot: a lamplit, serif, pill-studded room that looked like a template for a journal app rather than a tool I would actually use.",
+    approach: [
+      "I rebuilt the design from the materials of this site: warm paper, graphite ink and one marigold accent, Public Sans for everything you read and operate, Newsreader only for titles. The writing sits straight on the paper with nothing drawn around it, so casual notes look like notes. The room darkens on its own in the evening.",
+      "Explore reads like a letter about a stretch of time rather than a dashboard: how often you wrote, month by month; what the reflections say about it; what helped and what was hard, side by side and never weighed; what filled it and who was in it. Nothing is scored or coloured good or bad.",
+      "Every claim the journal makes carries its sources. A memory says whether it is your words or the model's reading, and opens the passages it came from. You can correct it in place, forget it, or delete it, and the correction is respected later.",
+      "Talk is a chat column with the composer pinned to the bottom of the window, four optional approaches in its foot (listen, reflect, challenge, plan) and an incognito switch that keeps a conversation out of storage entirely. Each reply lists the passages it drew on.",
+      "The real journal runs as a separate Worker behind Cloudflare Access with its own private D1 and media bucket; the public site is a browser-only demo with no account, keys or model calls. Privacy boundaries are written down beside the code and checked before each change.",
+    ],
+    outcome:
+      "It finally feels like mine: a plain notebook I open without thinking, with the analysis one step away instead of in my face. The design decisions, the AI's short character brief and the privacy rules are written down next to the code, so the next change keeps all three.",
+    gallery: [
+      { src: journalExplore, alt: "The Explore page: a strip of monthly bars, reflection lines with their dates, and two columns for what helped and what was hard", caption: "The look back: how often you wrote, what the time held, and what helped and what was hard side by side." },
+      { src: journalJournal, alt: "The Journal page: search, plain filters, and entries listed under month headings with the day number in the margin", caption: "Entries and conversations in one chronology, with the months that had nothing written shown as gaps." },
+      { src: journalMemory, alt: "The Memory page: short sentences the journal remembers, each with its date, sources and a Change link", caption: "What the journal remembers, each sentence marked as your words or a reading, with its sources one click away." },
+      { src: journalLanding, alt: "The landing page: a large serif headline on warm paper above a short introduction and a demo button", caption: "The public page is the same notebook seen from the doorway, with a browser-only demo." },
+    ],
+  },
   {
     slug: "munch",
     title: "Munch",
