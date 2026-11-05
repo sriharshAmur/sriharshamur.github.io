@@ -148,12 +148,12 @@ const n = stack.length;
     color: var(--on);
     line-height: 1;
   }
-  .slab[data-slab="0"] { --face: #ffb020; --edge: #c98100; --on: #161a33; }
-  .slab[data-slab="1"] { --face: #ffffff; --edge: #c8cde0; --on: #161a33; }
-  .slab[data-slab="2"] { --face: #b9c6fb; --edge: #8193dc; --on: #161a33; }
-  .slab[data-slab="3"] { --face: #2849c9; --edge: #172d8a; --on: #ffffff; }
-  .slab[data-slab="4"] { --face: #161a33; --edge: #05060f; --on: #ffb020; }
-  :global(.dark) .slab[data-slab="4"] { --face: #2a2f55; --edge: #0b0d1d; }
+  .slab[data-slab="0"] { --face: var(--marigold); --edge: #be820f; --on: var(--on-gold); }
+  .slab[data-slab="1"] { --face: #ffffff; --edge: #d6d0c6; --on: var(--on-gold); }
+  .slab[data-slab="2"] { --face: #ddd5c7; --edge: #a99f8f; --on: var(--on-gold); }
+  .slab[data-slab="3"] { --face: var(--brand-deep); --edge: var(--brand-deeper); --on: #ffffff; }
+  .slab[data-slab="4"] { --face: var(--on-gold); --edge: #0b0a09; --on: var(--marigold); }
+  :global(.dark) .slab[data-slab="4"] { --face: #4a453e; --edge: #1c1a17; }
 
   .iso.has-active .slab {
     filter: saturate(0.4);

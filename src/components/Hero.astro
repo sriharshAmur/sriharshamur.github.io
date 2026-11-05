@@ -1,4 +1,5 @@
 ---
+import CompanyLogo from "./CompanyLogo.astro";
 import { profile, experience } from "../data/site";
 const current = experience[0];
 const split = (word: string) => [...word];
@@ -9,8 +10,7 @@ let n = 0;
 <section class="hero" aria-labelledby="hero-name">
   <div class="wrap hero__wrap">
     <p class="hero__now ui">
-      <span class="hero__live" aria-hidden="true"></span>
-      <span>{current.title} at {current.company}</span>
+      <span class="hero__employer"><span class="hero__live" aria-hidden="true"></span><CompanyLogo company={current.logo} small /><span>{current.title} at {current.company}</span></span>
       <span class="hero__sep" aria-hidden="true"></span>
       <span class="hero__clock">Enschede, <time data-clock>--:--</time></span>
     </p>
@@ -23,8 +23,8 @@ let n = 0;
               ch === " " ? (
                 <span class="hero__space"> </span>
               ) : (
-                <span class="ch" style={`--i:${n++}`}>
-                  {ch}
+                <span class="ch" data-letter={ch} style={`--i:${n++}`}>
+                  <span class="ch__glyph">{ch}</span>
                 </span>
               )
             )}
@@ -33,15 +33,26 @@ let n = 0;
       }
     </h1>
 
-    <div class="hero__portrait" data-parallax aria-hidden="true">
-      <div class="hero__disc" data-depth="0.35"></div>
+    <div class="hero__portrait" data-parallax data-cursor="nerd">
+      <div class="hero__disc" data-depth="0.35" aria-hidden="true"></div>
       <img class="hero__photo" data-depth="0.8" src="/img/portrait.png" alt="" width="460" height="460" fetchpriority="high" />
+      <div class="hello" data-hello>
+        <button class="hello__button" type="button" data-hello-button aria-label="Say hello to the little dot">
+          <span class="hello__face" aria-hidden="true">
+            <span class="hello__eye"><span></span></span>
+            <span class="hello__eye"><span></span></span>
+            <svg class="hello__glasses" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="var(--on-gold)" stroke-width="2.4"><rect x="7" y="14" width="15" height="17" rx="5" /><rect x="26" y="14" width="15" height="17" rx="5" /><path d="M22 20q2-2 4 0M4 18h3m34 0h3" /></g></svg>
+            <svg class="hello__smile" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M19 36q5 6 10 0" stroke="var(--on-gold)" stroke-width="2" stroke-linecap="round" /></svg>
+          </span>
+        </button>
+        <span class="hello__message ui" data-hello-message aria-live="polite">Say hello</span>
+      </div>
     </div>
 
     <div class="hero__foot">
       <p class="hero__intro">{profile.intro}</p>
       <div class="hero__cta">
-        <a class="btn" href="/cv">
+        <a class="btn" href="/cv/">
           Read my CV
         </a>
         <a class="btn btn--ghost" href="#work">See selected work</a>
@@ -89,12 +100,14 @@ let n = 0;
     color: var(--ink-2);
     animation: rise 800ms var(--ease-out) 650ms backwards;
   }
+  .hero__employer { display: inline-flex; align-items: center; gap: 0.5rem; }
   .hero__live {
     position: relative;
+    flex: none;
     width: 0.55rem;
     height: 0.55rem;
     border-radius: 50%;
-    background: #2fb36a;
+    background: var(--success);
   }
   .hero__live::after {
     content: "";
@@ -113,7 +126,8 @@ let n = 0;
     font-variant-numeric: tabular-nums;
   }
 
-  /* The name. Letters stretch open from condensed, then respond to the pointer. */
+  /* A hidden, full-weight letter reserves each slot. The visible glyph can
+     change width and weight without moving its neighbours or its hit target. */
   .hero__name {
     grid-area: name;
     font-size: clamp(2.75rem, 15.5vw, 14.5rem);
@@ -133,35 +147,41 @@ let n = 0;
     }
   }
   .hero__line + .hero__line {
-    color: var(--delft);
+    color: var(--accent-display);
   }
   .ch {
     display: inline-block;
-    font-stretch: var(--wd, 100%);
-    /* --wg is eased every frame by site.ts while the pointer is near. */
-    font-weight: var(--wg, 850);
-    animation: stretch-in 1300ms var(--ease-out) backwards;
+    position: relative;
+    font-stretch: 100%;
+    font-weight: 850;
+  }
+  .ch::before {
+    content: attr(data-letter);
+    visibility: hidden;
+  }
+  .ch__glyph {
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    translate: -50% 0;
+    transform-origin: 50% 85%;
+    animation: letter-in 1300ms var(--ease-out) backwards;
     animation-delay: calc(100ms + var(--i) * 40ms);
   }
   .hero__space {
     display: inline-block;
     width: 0.22em;
   }
-  @keyframes stretch-in {
+  @keyframes letter-in {
     0% {
       opacity: 0;
       font-stretch: 50%;
       font-weight: 300;
       transform: translateY(0.3em);
     }
-    35% {
-      opacity: 1;
-    }
-    100% {
-      font-stretch: 100%;
-      font-weight: 850;
-      transform: none;
-    }
+    35% { opacity: 1; }
+    100% { font-stretch: 100%; font-weight: 850; transform: none; }
   }
 
   /* Portrait: a marigold sun with the cutout standing in front of it. */
@@ -187,6 +207,65 @@ let n = 0;
     /* --px and --py are eased by site.ts; a transition here would fight it. */
     will-change: transform;
     transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
+  }
+  .hello { display: none; }
+  @media (hover: none), (pointer: coarse) {
+    .hero__portrait { margin-bottom: 1.25rem; }
+    :global(.js) .hello {
+      position: absolute;
+      right: -0.8rem;
+      bottom: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .hello__button {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border: 3px solid var(--paper);
+      border-radius: 50%;
+      background: var(--marigold);
+      color: var(--on-gold);
+      touch-action: manipulation;
+      transition: transform 120ms var(--ease-out);
+    }
+    .hello__button:active { transform: scale(0.94); }
+    .hello__face {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      width: 100%;
+      height: 100%;
+    }
+    .hello__eye {
+      display: grid;
+      place-items: center;
+      width: 12px;
+      height: 17px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .hello__eye > span { width: 5px; height: 7px; border-radius: 50%; background: var(--on-gold); }
+    .hello__glasses, .hello__smile { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 160ms ease; }
+    .hello__glasses { transform: translateY(-2px); transition: opacity 160ms ease, transform 200ms var(--ease-out); }
+    .hello.is-nerd .hello__glasses { opacity: 1; transform: none; }
+    .hello.is-happy .hello__smile { opacity: 1; }
+    .hello__message {
+      position: absolute;
+      top: calc(100% + 0.4rem);
+      right: 0;
+      width: max-content;
+      max-width: min(15rem, 65vw);
+      font-size: 0.75rem;
+      line-height: 1.35;
+      color: var(--ink-2);
+    }
   }
   .hero__disc {
     border-radius: 50%;
@@ -257,6 +336,7 @@ let n = 0;
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .hello__button:active { transform: none; }
     .hero__live::after {
       display: none;
     }

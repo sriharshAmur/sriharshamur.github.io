@@ -1,0 +1,84 @@
+<!-- Decoration only. The native cursor and all pointer targets stay intact. -->
+<div class="companion" data-companion aria-hidden="true" inert>
+  <div class="companion__body" data-companion-body>
+    <div class="companion__eyes">
+      <span class="companion__eye"><span data-companion-pupil></span></span>
+      <span class="companion__eye"><span data-companion-pupil></span></span>
+    </div>
+    <svg class="companion__specs" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <g stroke="var(--on-gold)" stroke-width="2.4" stroke-linejoin="round">
+        <rect x="7" y="14" width="15" height="17" rx="5" />
+        <rect x="26" y="14" width="15" height="17" rx="5" />
+        <path d="M22 20.5Q24 18 26 20.5M4 17l3 2M41 19l3-2" />
+        <path d="M18 36q6 7 12 0" stroke-linecap="round" />
+      </g>
+      <path d="M21 37h6v4h-6z" fill="#fff" />
+      <path d="M24 37v4" stroke="var(--on-gold)" stroke-width="1" />
+    </svg>
+  </div>
+</div>
+
+<style>
+  .companion { display: none; }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .companion {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 48px;
+      height: 48px;
+      z-index: 60;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 150ms ease;
+    }
+    .companion.is-visible { opacity: 1; }
+    .companion__body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--marigold);
+      box-shadow: 0 0 0 1px rgb(var(--shadow) / 0.16);
+      transform: scale(0.2);
+      transition: transform 240ms var(--ease-out);
+    }
+    .is-curious .companion__body { transform: scale(1); }
+    .companion__eyes {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 120ms ease;
+    }
+    .is-curious .companion__eyes { opacity: 1; }
+    .companion__specs {
+      position: absolute;
+      inset: 0;
+      width: 48px;
+      height: 48px;
+      opacity: 0;
+      transform: translateY(-3px);
+      transition: opacity 150ms ease, transform 200ms var(--ease-out);
+    }
+    .is-nerd .companion__specs { opacity: 1; transform: translateY(0); }
+    .companion__eye {
+      display: grid;
+      place-items: center;
+      width: 12px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .companion__eye > span {
+      width: 5px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--on-gold);
+    }
+  }
+  @media print { .companion { display: none !important; } }
+</style>

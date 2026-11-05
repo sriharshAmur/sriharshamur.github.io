@@ -55,7 +55,7 @@ const { items } = Astro.props;
     translate: -50% -50%;
     transform: scale(0.82);
     transition: opacity 200ms var(--ease-out), transform 360ms var(--ease-out);
-    box-shadow: 0 30px 60px -22px rgb(15 18 38 / 0.55), 0 0 0 1px rgb(15 18 38 / 0.06);
+    box-shadow: 0 30px 60px -22px rgb(var(--shadow) / 0.55), 0 0 0 1px rgb(var(--shadow) / 0.06);
   }
   .float.is-on .float__inner {
     opacity: 1;

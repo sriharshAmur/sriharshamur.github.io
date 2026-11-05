@@ -1,10 +1,12 @@
 ---
+import MobileJoy from "./MobileJoy.astro";
 import { profile } from "../data/site";
 const year = new Date().getFullYear();
 ---
 
 <footer class="foot" id="contact">
   <div class="wrap">
+    <MobileJoy />
     <h2 class="stretch foot__title" data-stretch>Say hello</h2>
     <div class="foot__grid">
       <p class="foot__lead">
@@ -23,7 +25,7 @@ const year = new Date().getFullYear();
           <li><a class="link" href={`mailto:${profile.email}`}>Write an email</a></li>
           <li><a class="link" href={profile.links.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>
           <li><a class="link" href={profile.links.github} target="_blank" rel="noopener">GitHub</a></li>
-          <li><a class="link" href="/cv">CV</a></li>
+          <li><a class="link" href="/cv/">CV</a></li>
         </ul>
       </div>
     </div>
@@ -37,15 +39,11 @@ const year = new Date().getFullYear();
 <style>
   .foot {
     padding-block: clamp(5rem, 12vw, 9rem) 2rem;
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--footer-background);
+    color: var(--footer-ink);
     border-radius: var(--radius-l) var(--radius-l) 0 0;
     margin-top: clamp(3rem, 8vw, 6rem);
-    --line: rgb(236 238 242 / 0.16);
-  }
-  :global(.dark) .foot {
-    background: #080a18;
-    color: var(--ink);
+    --line: rgb(244 241 236 / 0.16);
   }
   .foot__title {
     font-size: clamp(3.5rem, 15vw, 13rem);
@@ -126,7 +124,7 @@ const year = new Date().getFullYear();
     padding: 0.3rem 0.7rem;
     border-radius: 999px;
     background: var(--marigold);
-    color: #161a33;
+    color: var(--on-gold);
     font-size: 0.85rem;
     white-space: nowrap;
     opacity: 0;

@@ -86,20 +86,20 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     object-fit: cover;
   }
   .cover--viz {
-    background: linear-gradient(140deg, #2849c9, #1a2e8a);
+    background: linear-gradient(140deg, var(--brand-deep), var(--brand-deeper));
   }
   .cover--jobs {
     background: linear-gradient(140deg, #ffc54d, #f29b16);
   }
   .cover--chat {
-    background: linear-gradient(140deg, #6b6fd6, #3f42a8);
+    background: linear-gradient(140deg, var(--brand-deep), var(--brand-deeper));
   }
 
   .mock {
     position: absolute;
     inset: 12% 9% -8% 9%;
     border-radius: 12px 12px 0 0;
-    background: #f7f8fb;
+    background: #f9f8f6;
     box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.45);
     overflow: hidden;
     transition: transform 700ms var(--ease-out);
@@ -108,13 +108,13 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     display: flex;
     gap: 5px;
     padding: 9px 11px;
-    background: #e8eaf0;
+    background: #ece8e2;
   }
   .mock__chrome i {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #c9ccd8;
+    background: #d6d0c6;
   }
 
   /* Viz extension */
@@ -130,11 +130,11 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     flex-direction: column;
     gap: 8px;
     font-family: var(--display);
-    color: #161a33;
+    color: var(--on-gold);
   }
   .viz__k {
     font-size: clamp(0.5rem, 1vw, 0.75rem);
-    color: #626983;
+    color: #6b6761;
   }
   .viz__v {
     font-weight: 800;
@@ -145,29 +145,29 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
   .viz__pill {
     height: 7px;
     border-radius: 4px;
-    background: #dfe3f0;
+    background: #e7e2da;
   }
   .viz__pill--short {
     width: 60%;
-    background: #ffb020;
+    background: var(--marigold);
   }
   .viz__chart {
     display: flex;
     align-items: flex-end;
     gap: 5%;
-    border-bottom: 1.5px solid #dfe3f0;
+    border-bottom: 1.5px solid #e7e2da;
   }
   .viz__bar {
     flex: 1;
     height: var(--h);
     border-radius: 4px 4px 0 0;
-    background: #2849c9;
+    background: var(--brand-deep);
     transform-origin: 50% 100%;
     transition: transform 700ms var(--ease-out);
     transition-delay: calc(var(--i) * 40ms);
   }
   .viz__bar:nth-child(5) {
-    background: #ffb020;
+    background: var(--marigold);
   }
 
   /* Job board */
@@ -180,7 +180,7 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     height: 22px;
     border-radius: 999px;
     background: #fff;
-    box-shadow: inset 0 0 0 1.5px #e1e4ee;
+    box-shadow: inset 0 0 0 1.5px #e3ded6;
     padding: 7px 12px;
   }
   .jobs__search span {
@@ -188,7 +188,7 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     width: 40%;
     height: 100%;
     border-radius: 4px;
-    background: #e1e4ee;
+    background: #e3ded6;
   }
   .jobs__row {
     display: flex;
@@ -197,7 +197,7 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     padding: 9px;
     border-radius: 10px;
     background: #fff;
-    box-shadow: 0 1px 0 #e6e8f0;
+    box-shadow: 0 1px 0 #ebe7e1;
     transition: transform 600ms var(--ease-out);
     transition-delay: calc(var(--i) * 50ms);
   }
@@ -205,11 +205,11 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     width: 22px;
     height: 22px;
     border-radius: 6px;
-    background: #161a33;
+    background: var(--on-gold);
     flex: none;
   }
   .jobs__row:nth-child(3) .jobs__logo {
-    background: #2849c9;
+    background: var(--brand-deep);
   }
   .jobs__row:nth-child(4) .jobs__logo {
     background: #f29b16;
@@ -222,17 +222,17 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
   .jobs__lines span {
     height: 6px;
     border-radius: 3px;
-    background: #d6d9e4;
+    background: #d9d3ca;
   }
   .jobs__lines span + span {
     width: 55%;
-    background: #eceef3;
+    background: #f2efea;
   }
   .jobs__cta {
     width: 38px;
     height: 16px;
     border-radius: 999px;
-    background: #ffb020;
+    background: var(--marigold);
   }
 
   /* Chat */
@@ -247,13 +247,13 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     justify-items: center;
     gap: 10px;
     padding-top: 14px;
-    background: #ebebf7;
+    background: #efebe5;
   }
   .chat__rail span {
     width: 20px;
     height: 20px;
     border-radius: 6px;
-    background: #5b5fc7;
+    background: var(--brand-deep);
     opacity: 0.35;
   }
   .chat__rail span:first-child {
@@ -269,21 +269,21 @@ const bars = [62, 88, 45, 74, 96, 58, 81, 39, 67];
     width: var(--w);
     height: 16px;
     border-radius: 8px 8px 8px 2px;
-    background: #e3e4f2;
+    background: #e5e0d8;
     transition: transform 500ms var(--ease-out), opacity 500ms var(--ease-out);
     transition-delay: calc(var(--i) * 60ms);
   }
   .chat__msg--me {
     align-self: flex-end;
     border-radius: 8px 8px 2px 8px;
-    background: #5b5fc7;
+    background: var(--brand-deep);
   }
   .chat__input {
     margin-top: auto;
     margin-bottom: 8%;
     height: 20px;
     border-radius: 6px;
-    box-shadow: inset 0 0 0 1.5px #e1e4ee;
+    box-shadow: inset 0 0 0 1.5px #e3ded6;
   }
 
   /* When the parent card is hovered, the illustrations come alive a little. */

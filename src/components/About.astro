@@ -4,28 +4,34 @@ import { profile } from "../data/site";
 
 <section class="section about" id="about" aria-labelledby="about-title">
   <div class="wrap about__wrap">
-    <figure class="about__photo" data-reveal>
-      <img src="/img/portrait-cv.png" alt={`Portrait of ${profile.name}`} width="250" height="250" loading="lazy" />
+    <figure class="about__photo" data-reveal data-cursor="nerd">
+      <img src="/img/portrait.png" alt={`Portrait of ${profile.name}`} width="460" height="460" loading="lazy" decoding="async" />
     </figure>
     <div class="about__text">
-      <h2 class="stretch" id="about-title" data-stretch>Hi, I'm Sri Harsh</h2>
+      <h2 class="stretch about__title" id="about-title" data-stretch><span>Hi, I'm</span> <span>Sri Harsh</span></h2>
       <div class="about__body">
         <p data-reveal style="--i:0">
-          I grew up in New Delhi and came to Enschede in 2019 to study at the University of Twente. The Netherlands
-          stuck, and so did building things for the web.
+          I’m a full-stack developer in Enschede. I grew up in New Delhi, came to the Netherlands in 2019 to study
+          Computer Science at the University of Twente, and now work at Just Eat Takeaway.com on the pages people
+          use to follow their order.
         </p>
         <p data-reveal style="--i:1">
-          My work sits where interfaces meet systems. I like the front end enough to sweat an easing curve, and the
-          back end enough to care what happens when a Kafka consumer falls behind. Working as a Product Owner
-          taught me to ask whether something is worth building before asking how.
+          I like working close to the people who use what I build. At AppsForTableau that meant joining customer
+          calls, then going back and rebuilding the part they had struggled with. Now it means watching real-user
+          data after a release, because a feature isn’t done until it’s clearly better.
         </p>
         <p data-reveal style="--i:2">
-          Outside work I build side projects to scratch my own itches. The latest turns a decade of Google Maps history
-          into a story you can scroll through.
+          Most of my curiosity right now goes into AI as part of how software gets made. The reporting tools I built
+          at work started as an experiment and now help us catch production incidents. With AI taking the repetitive
+          parts, one developer can cover far more ground, from the first sketch to the production alert.
+        </p>
+        <p data-reveal style="--i:3">
+          Outside work, I build small things for myself: years of location history on a night map, a year of
+          takeaway orders read back as a story. They’re where I try ideas before I’d defend them at work.
         </p>
       </div>
-      <div class="about__cta" data-reveal style="--i:3">
-        <a class="btn" href="/cv">Read the full CV</a>
+      <div class="about__cta" data-reveal style="--i:4">
+        <a class="btn" href="/cv/">Read the full CV</a>
         <a class="btn btn--ghost" href="#contact">Get in touch</a>
       </div>
     </div>
@@ -50,7 +56,7 @@ import { profile } from "../data/site";
     overflow: hidden;
     background: var(--marigold);
     rotate: -3deg;
-    box-shadow: 0 30px 60px -30px rgb(15 18 38 / 0.5);
+    box-shadow: 0 30px 60px -30px rgb(var(--shadow) / 0.5);
     transition: rotate 700ms var(--ease-out), transform 700ms var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
@@ -68,6 +74,20 @@ import { profile } from "../data/site";
   .about__photo img {
     width: 100%;
     height: auto;
+    /* The cutout sits slightly low on the marigold card, like a passport photo. */
+    translate: 0 4%;
+    scale: 1.04;
+  }
+  /* Size the heading to its own column, so "Sri Harsh" fits at full stretch. */
+  .about__text {
+    container-type: inline-size;
+  }
+  .about__title {
+    font-size: min(6.5rem, 12.5cqi);
+  }
+  .about__title span {
+    display: inline-block;
+    white-space: nowrap;
   }
   .about__body {
     display: grid;

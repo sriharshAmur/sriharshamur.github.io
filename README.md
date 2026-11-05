@@ -21,8 +21,27 @@ case studies. Home and `/cv` share this content. The personal introduction and
 career milestones live in `src/components/About.astro` and `Path.astro`.
 `/cv` includes a browser print / Save as PDF action with an A4 stylesheet.
 
-The palette uses Delft blue (`#2849c9`), marigold (`#ffb020`), porcelain
-(`#eceef2`), navy ink (`#161a33`) and a pale surface (`#f6f7fa`). Anybody variable
+The CV uses a single reading column with outcome-led achievement bullets and
+selective bold emphasis. Its focused skills, projects and speaking selection live
+in the `cv` export in `src/data/site.ts`. It deliberately omits the profile,
+portrait, secondary school and older practice projects. The portfolio retains its
+broader content. JET claims follow the November 2026 verified evidence report;
+internal reviews, ticket references and unverified impact estimates are excluded.
+Anybody headings and Newsreader body copy connect it to the portfolio. Delft-blue
+section icons and employer headers establish hierarchy, with marigold highlights
+on selected verified results. Official employer marks and explicit technology
+labels make roles easier to scan. The same accents carry through to the PDF.
+
+For a two-page PDF generated from the actual CV page, run `npm run export:cv`.
+This builds the site and writes `output/pdf/Sri-Harsh-Amur-CV.pdf` using local
+Chrome or Chromium. Set `CHROME_PATH` if the executable is in a nonstandard
+location. CSS, fonts and employer logos are embedded for export; no development server is needed.
+Generated exports are git-ignored. The print layout begins earlier experience on
+page two and preserves selectable text and clickable contact/project links.
+
+The shared palette uses blue (`#1766c1`), marigold (`#ffba38`), porcelain
+(`#f2f5f7`) and charcoal ink (`#18242c`). Dark mode uses neutral charcoal
+(`#14191c`) with sky-blue (`#76baff`) and warm gold (`#ffc254`) accents. Anybody variable
 type carries the large, left-aligned name and controls; Newsreader carries prose.
 The desktop hero balances a two-line name with a portrait, then the page moves
 through featured work, an interactive stack, a career route and a personal note.
@@ -35,6 +54,18 @@ career route, page transitions and a circular theme reveal. Reduced-motion
 preferences remove movement and reveal content immediately. Content stays
 readable when JavaScript is disabled. Non-screenshot project covers are labelled
 as illustrations; Long Exposure screenshots use fictional demo data.
+
+The hero name keeps fixed letter slots while its visible glyphs stretch in and
+change weight with pointer proximity. Hover takes over when the actual entrance
+animations finish, avoiding competing updates. A decorative cursor dot becomes
+a small character around featured projects and puts on glasses over portraits, yielding to
+buttons, navigation, text selection and floating previews. The native cursor
+remains visible. On touchscreens, a button beside the portrait gives a short
+greeting, wink, glasses and letter wave without intercepting scrolling. A tappable
+sunshine in the footer and brief tap celebrations add touch-only responses;
+repeated taps replace existing particles rather than accumulating them. Reduced motion
+disables the follower and moving responses; the greeting still works. The CV
+does not include the character. Phone contact details are omitted site-wide.
 
 ## Cloudflare hosting
 

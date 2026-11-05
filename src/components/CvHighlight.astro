@@ -1,0 +1,6 @@
+---
+interface Props { text: string; highlight?: string; }
+const { text, highlight } = Astro.props;
+const index = highlight ? text.indexOf(highlight) : -1;
+---
+{highlight && index >= 0 ? <>{text.slice(0, index)}<mark class="cv-highlight">{highlight}</mark>{text.slice(index + highlight.length)}</> : text}

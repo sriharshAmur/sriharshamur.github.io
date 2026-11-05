@@ -1,21 +1,35 @@
 /* ------------------------------------------------------------------
-   Tokens. Delft blue for the Netherlands, marigold for India.
+   Tokens. Warm paper and graphite, with marigold (for India) as the one
+   accent. --accent is the text-safe shade; --marigold is for fills.
    ------------------------------------------------------------------ */
 :root {
-  --paper: #eceef2;
-  --paper-2: #e2e5ec;
-  --ink: #161a33;
-  --ink-2: #4a5070;
-  --ink-3: #626983;
-  --line: rgb(22 26 51 / 0.14);
-  --delft: #2849c9;
-  --delft-soft: #d7defa;
-  --marigold: #ffb020;
-  --marigold-soft: #ffe4ad;
-  --surface: #f6f7fa;
+  --paper: #faf9f7;
+  --paper-2: #efede9;
+  --ink: #1b1a18;
+  --ink-2: #4a4743;
+  --ink-3: #6b6761;
+  --line: rgb(27 26 24 / 0.12);
+  --accent: #9a5800;
+  --accent-soft: rgb(232 154 30 / 0.16);
+  --accent-display: #c96f00;
+  --on-accent: #fffaf2;
+  --delft: var(--accent);
+  --delft-soft: var(--accent-soft);
+  --marigold: #f5b13d;
+  --marigold-soft: #fbe6bd;
+  --surface: #ffffff;
+
+  --brand-deep: #2d2a26;
+  --brand-deeper: #191816;
+  --on-gold: #1b1a18;
+  --success: #2f9e62;
+  --footer-background: #1b1a18;
+  --footer-ink: #f4f1ec;
+  --shadow: 27 24 20;
 
   --display: "Anybody", "Arial Narrow", system-ui, sans-serif;
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Public Sans", system-ui, sans-serif;
 
   /* Motion. Strong ease-out for things that respond, in-out for things that travel. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -55,17 +69,20 @@
 }
 
 :root.dark {
-  --paper: #0f1226;
-  --paper-2: #171b36;
-  --ink: #e8eaf4;
-  --ink-2: #b4b9d2;
-  --ink-3: #a0a6bf;
-  --line: rgb(232 234 244 / 0.13);
-  --delft: #8aa0ff;
-  --delft-soft: #222b5c;
-  --marigold: #ffb72e;
-  --marigold-soft: #3d3016;
-  --surface: #151931;
+  --paper: #161514;
+  --paper-2: #22201e;
+  --ink: #f4f1ec;
+  --ink-2: #cfcac2;
+  --ink-3: #a8a299;
+  --line: rgb(244 241 236 / 0.12);
+  --accent: #f6bf55;
+  --accent-soft: rgb(246 191 85 / 0.12);
+  --accent-display: #f6bf55;
+  --on-accent: #161514;
+  --marigold: #f6bf55;
+  --marigold-soft: #3d3220;
+  --surface: #1d1c1a;
+  --footer-background: #0f0e0d;
   color-scheme: dark;
 }
 
@@ -79,6 +96,13 @@
   font-stretch: 50% 150%;
   font-display: swap;
   src: url("/fonts/anybody-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/public-sans-latin.woff2") format("woff2");
 }
 @font-face {
   font-family: "Newsreader";
@@ -140,7 +164,7 @@ ol[role="list"] {
 }
 ::selection {
   background: var(--marigold);
-  color: #161a33;
+  color: var(--on-gold);
 }
 :focus-visible {
   outline: 2px solid var(--delft);
@@ -243,7 +267,7 @@ p {
 }
 @media (hover: hover) and (pointer: fine) {
   .btn:hover {
-    box-shadow: 0 10px 30px -12px rgb(22 26 51 / 0.5);
+    box-shadow: 0 10px 30px -12px rgb(var(--shadow) / 0.5);
   }
   .btn--ghost:hover {
     box-shadow: inset 0 0 0 1.5px var(--ink);
@@ -417,3 +441,19 @@ p {
 .theme-vt * {
   view-transition-name: none !important;
 }
+
+/* Printing from the browser must never drop content that has not scrolled into view. */
+@media print {
+  .js [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+}
+
+/* Tiny, user-triggered celebrations on touchscreens only. */
+.mobile-burst { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.mobile-burst__petal { position: absolute; top: 50%; left: 50%; width: 7px; height: 7px; border-radius: 2px; }
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .feat__tilt { transition: scale 180ms var(--ease-out); }
+  .feat:active .feat__tilt { scale: 0.985; }
+  .layer__plus { transition: scale 160ms var(--ease-out); }
+  .layer__btn:active .layer__plus { scale: 1.2; }
+}
+@media (prefers-reduced-motion: reduce), print { .mobile-burst { display: none; } }

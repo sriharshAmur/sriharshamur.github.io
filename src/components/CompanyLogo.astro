@@ -1,0 +1,17 @@
+---
+import { companyLogos } from "../data/site";
+interface Props { company: keyof typeof companyLogos; small?: boolean; }
+const { company, small = false } = Astro.props;
+---
+<span class:list={["company-logo", { "company-logo--small": small, "company-logo--apps": company === "appsForTableau" }]}>
+  <img src={companyLogos[company]} alt="" width="40" height="40" />
+</span>
+<style>
+  .company-logo { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 2.6rem; height: 2.6rem; padding: 0.35rem; background: #fff; border-radius: 9px; border: 1px solid rgb(27 26 24 / 0.1); vertical-align: middle; }
+  .company-logo img { width: 100%; height: 100%; object-fit: contain; }
+  /* The official square asset includes generous white margins around its mark. */
+  .company-logo--apps { overflow: hidden; }
+  .company-logo--apps img { transform: scale(1.9); }
+  .company-logo--small { width: 1.55rem; height: 1.55rem; padding: 0.18rem; border-radius: 5px; }
+  @media print { .company-logo { width: 8mm; height: 8mm; padding: 1mm; border-radius: 1.5mm; } }
+</style>

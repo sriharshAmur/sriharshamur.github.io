@@ -13,7 +13,7 @@ const liveLink = (w: (typeof work)[number]) => w.links.find((l) => l.href.starts
     <div class="work__head">
       <h2 class="stretch" id="work-title" data-stretch>Selected work</h2>
       <p class="work__lede muted" data-reveal>
-        Things I've built at work and on my own time. Each one has the problem, what I did, and how it turned out.
+        Product work and independent projects, with the thinking, technical decisions and results behind each one.
       </p>
     </div>
 
@@ -22,7 +22,7 @@ const liveLink = (w: (typeof work)[number]) => w.links.find((l) => l.href.starts
         featured.map((item, i) => {
           const live = liveLink(item);
           return (
-            <article class:list={["feat", { "feat--flip": i % 2 === 1 }]} data-tilt-scope>
+            <article class:list={["feat", { "feat--flip": i % 2 === 1 }]} data-tilt-scope data-cursor="curious">
               <div class="feat__media" data-feature-media>
                 <div class="feat__tilt" data-tilt="5">
                   <Cover item={item} vt eager={i === 0} />
@@ -37,7 +37,7 @@ const liveLink = (w: (typeof work)[number]) => w.links.find((l) => l.href.starts
                   </span>
                 </div>
                 <h3 class="feat__title display" style={`view-transition-name:title-${item.slug}`}>
-                  <a class="feat__link" href={`/work/${item.slug}`}>
+                  <a class="feat__link" href={`/work/${item.slug}/`}>
                     {item.title}
                   </a>
                 </h3>
@@ -66,7 +66,7 @@ const liveLink = (w: (typeof work)[number]) => w.links.find((l) => l.href.starts
       {
         rest.map((item, i) => (
           <li class="row" data-reveal style={`--i:${i}`}>
-            <a class="row__link" href={`/work/${item.slug}`} data-row={i}>
+            <a class="row__link" href={`/work/${item.slug}/`} data-row={i}>
               <span class="row__year ui">{item.year}</span>
               <span class="row__main">
                 <span class="row__title display" style={`view-transition-name:title-${item.slug}`}>
@@ -149,12 +149,12 @@ const liveLink = (w: (typeof work)[number]) => w.links.find((l) => l.href.starts
     inset: 6% 4% -2%;
     z-index: -1;
     border-radius: inherit;
-    box-shadow: 0 50px 90px -30px rgb(15 18 38 / 0.7);
+    box-shadow: 0 50px 90px -30px rgb(var(--shadow) / 0.7);
     opacity: calc(0.55 + var(--lift, 0) * 0.45);
   }
   .feat__tilt :global(.cover) {
     border-radius: var(--radius-l);
-    box-shadow: 0 2px 6px -2px rgb(15 18 38 / 0.25);
+    box-shadow: 0 2px 6px -2px rgb(var(--shadow) / 0.25);
   }
   .feat__glare {
     position: absolute;
@@ -179,7 +179,7 @@ const liveLink = (w: (typeof work)[number]) => w.links.find((l) => l.href.starts
     padding: 0.2em 0.65em;
     border-radius: 999px;
     background: var(--marigold);
-    color: #161a33;
+    color: var(--on-gold);
     font-weight: 700;
   }
   .feat__title {

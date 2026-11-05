@@ -12,6 +12,7 @@ export {};
 
 const root = document.documentElement;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+const touchPointer = matchMedia("(hover: none), (pointer: coarse)");
 const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
 const $ = <T extends Element = HTMLElement>(sel: string, el: ParentNode = document) => el.querySelector<T>(sel);
 const $$ = <T extends Element = HTMLElement>(sel: string, el: ParentNode = document) => [...el.querySelectorAll<T>(sel)];
@@ -52,9 +53,16 @@ function smooth<K extends string>(initial: Record<K, number>, apply: (v: Record<
       if (!raf) raf = requestAnimationFrame(step);
     },
     jump(next: Partial<Record<K, number>>) {
+      cancelAnimationFrame(raf);
+      raf = last = 0;
       Object.assign(target, next);
       Object.assign(value, next);
       apply(value);
+    },
+    stop() {
+      cancelAnimationFrame(raf);
+      raf = last = 0;
+      Object.assign(target, value);
     },
   };
 }
@@ -127,6 +135,7 @@ $$("[data-copy]").forEach((btn) => {
       return;
     }
     btn.classList.add("is-copied");
+    celebrate(btn);
     clearTimeout(timer);
     timer = window.setTimeout(() => {
       btn.classList.remove("is-copied");
@@ -232,12 +241,11 @@ scrollEffects.push(() => {
   };
 });
 
-/* ---------------------------------------------------------------- Hero: letters respond to the pointer */
+/* ---------------------------------------------------------------- Hero: variable weight inside stable letter slots */
 const name = $("[data-proximity]");
 if (name) {
   const chars = $$(".ch", name);
-  // Letter centres, relative to the heading. Measured at rest, so the
-  // weights we set never feed back into where we think the letters are.
+  const glyphs = $$(".ch__glyph", name);
   let centres: { x: number; y: number }[] = [];
   let box: DOMRect | null = null;
   const measure = () => {
@@ -248,60 +256,192 @@ if (name) {
       return { x: r.left - b.left + r.width / 2, y: r.top - b.top + r.height / 2 };
     });
   };
-  const weights = chars.map(() => 850);
-  const targets = chars.map(() => 850);
-  let raf = 0;
-  let last = 0;
-  const step = (now: number) => {
-    const dt = last ? Math.min(64, now - last) : 16.7;
-    last = now;
-    const k = 1 - Math.exp((-12 * dt) / 1000);
-    let moving = false;
-    chars.forEach((c, i) => {
-      const gap = targets[i] - weights[i];
-      if (Math.abs(gap) < 0.5) weights[i] = targets[i];
-      else {
-        weights[i] += gap * k;
-        moving = true;
-      }
-      c.style.setProperty("--wg", weights[i].toFixed(0));
-    });
-    raf = moving ? requestAnimationFrame(step) : (last = 0);
-  };
-  const aim = (mx: number, my: number) => {
+  const letters = glyphs.map((glyph) => smooth({ weight: 850 }, ({ weight }) => {
+    glyph.style.fontWeight = weight.toFixed(2);
+  }, 12));
+  let ready = false;
+  let pointer: { x: number; y: number } | null = null;
+  const aim = () => {
+    if (!ready || !pointer || !canFollowPointer()) return;
     if (!box) measure();
     const b = box!;
+    const point = pointer;
     centres.forEach((p, i) => {
-      const d = Math.hypot(mx - (b.left + p.x), my - (b.top + p.y));
-      const f = clamp(1 - d / 380);
-      targets[i] = 850 - f * f * (3 - 2 * f) * 520; // smoothstep
+      const proximity = clamp(1 - Math.hypot(point.x - b.left - p.x, point.y - b.top - p.y) / 380);
+      letters[i].to({ weight: 850 - proximity * proximity * (3 - 2 * proximity) * 520 });
     });
-    if (!raf) raf = requestAnimationFrame(step);
   };
-  const forget = () => {
-    box = null;
+  const reset = () => {
+    pointer = null;
+    letters.forEach((letter) => letter.to({ weight: 850 }));
   };
+  const stop = () => {
+    pointer = null;
+    letters.forEach((letter) => letter.jump({ weight: 850 }));
+  };
+  const forget = () => { box = null; };
   addEventListener("scroll", forget, { passive: true });
-  addEventListener("resize", () => {
-    box = null;
-    centres = [];
+  new ResizeObserver(forget).observe(name);
+  // Hand over after the actual stagger finishes, including late font loading.
+  // A fixed timeout used to let hover and entrance write the same property.
+  document.fonts.ready.then(async () => {
+    await Promise.allSettled(glyphs.flatMap((glyph) => glyph.getAnimations().map((animation) => animation.finished)));
+    forget();
+    ready = true;
+    aim();
   });
+  name.addEventListener("pointermove", (ev) => {
+    if (!canFollowPointer() || ev.pointerType !== "mouse") return;
+    pointer = { x: ev.clientX, y: ev.clientY };
+    aim();
+  });
+  name.addEventListener("pointerleave", reset);
+  addEventListener("blur", stop);
+  reduced.addEventListener("change", stop);
+  finePointer.addEventListener("change", stop);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
+}
 
-  // Wait for the entrance to finish before taking over the letters.
-  setTimeout(() => {
-    name.addEventListener("pointerenter", () => {
-      if (!centres.length) measure();
+/* ---------------------------------------------------------------- A small, optional pointer companion */
+const companion = $("[data-companion]");
+if (companion) {
+  const pupils = $$("[data-companion-pupil]", companion);
+  let seen = false;
+  let mx = 0, my = 0;
+  const follower = smooth({ x: 0, y: 0 }, ({ x, y }) => {
+    companion.style.transform = `translate3d(${x - 24}px, ${y - 24}px, 0)`;
+    const dx = mx - x, dy = my - y;
+    const distance = Math.max(1, Math.hypot(dx, dy));
+    const gaze = Math.min(3, distance / 10);
+    pupils.forEach((pupil) => {
+      pupil.style.transform = `translate(${dx / distance * gaze}px, ${dy / distance * gaze}px)`;
     });
-    name.addEventListener("pointermove", (ev) => {
-      if (!canFollowPointer()) return;
-      if (!centres.length) measure();
-      aim(ev.clientX, ev.clientY);
-    });
-    name.addEventListener("pointerleave", () => {
-      targets.fill(850);
-      if (!raf) raf = requestAnimationFrame(step);
-    });
-  }, 1600);
+  }, 20);
+  const hide = () => {
+    companion.classList.remove("is-visible", "is-curious", "is-nerd");
+    follower.stop();
+    seen = false;
+  };
+  document.addEventListener("pointermove", (ev) => {
+    if (!canFollowPointer() || ev.pointerType !== "mouse") return hide();
+    const target = ev.target instanceof Element ? ev.target : null;
+    const mood = target?.closest<HTMLElement>("[data-cursor]")?.dataset.cursor;
+    const nerd = mood === "nerd";
+    const curious = nerd || mood === "curious";
+    // Existing text interactions and floating project previews get the stage.
+    const busy = target?.closest('[data-proximity], [data-row], .nav, input, textarea, select, [contenteditable="true"]')
+      || (!curious && target?.closest('a, button, [data-magnetic]'));
+    if (busy) return hide();
+    mx = ev.clientX;
+    my = ev.clientY;
+    const position = {
+      x: clamp(mx + (curious ? 32 : 16), 26, innerWidth - 26),
+      y: clamp(my + (curious ? 32 : 16), 26, innerHeight - 26),
+    };
+    if (!seen) follower.jump(position);
+    else follower.to(position);
+    seen = true;
+    companion.classList.toggle("is-curious", curious);
+    companion.classList.toggle("is-nerd", nerd);
+    companion.classList.add("is-visible");
+  }, { passive: true });
+  document.addEventListener("pointerleave", hide);
+  document.addEventListener("pointerdown", (ev) => { if (ev.pointerType !== "mouse") hide(); });
+  document.addEventListener("keydown", hide);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) hide(); });
+  addEventListener("scroll", hide, { passive: true });
+  addEventListener("blur", hide);
+  addEventListener("pagehide", hide);
+  reduced.addEventListener("change", hide);
+  finePointer.addEventListener("change", hide);
+}
+
+/* ---------------------------------------------------------------- Touch celebrations: bounded and disposable */
+const bursts = new Map<HTMLElement, { node: HTMLElement; animations: Animation[] }>();
+function clearBurst(button: HTMLElement) {
+  const burst = bursts.get(button);
+  if (!burst) return;
+  burst.animations.forEach((animation) => animation.cancel());
+  burst.node.remove();
+  bursts.delete(button);
+}
+function celebrate(button: HTMLElement) {
+  clearBurst(button);
+  if (!touchPointer.matches || reduced.matches) return;
+  const node = document.createElement("span");
+  node.className = "mobile-burst";
+  node.setAttribute("aria-hidden", "true");
+  button.append(node);
+  const animations = Array.from({ length: 8 }, (_, i) => {
+    const petal = document.createElement("span");
+    petal.className = "mobile-burst__petal";
+    petal.style.background = i % 2 ? "var(--delft)" : "var(--marigold)";
+    node.append(petal);
+    const angle = (i / 8) * Math.PI * 2;
+    const x = Math.cos(angle) * 54, y = Math.sin(angle) * 54;
+    return petal.animate([
+      { transform: "translate(-50%, -50%) scale(0.8)", opacity: 0 },
+      { opacity: 1, offset: 0.12 },
+      { transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${i * 45}deg) scale(0.4)`, opacity: 0 },
+    ], { duration: 620, easing: "cubic-bezier(0.23, 1, 0.32, 1)" });
+  });
+  bursts.set(button, { node, animations });
+  Promise.allSettled(animations.map((animation) => animation.finished)).then(() => {
+    if (bursts.get(button)?.node === node) clearBurst(button);
+  });
+}
+const clearBursts = () => [...bursts.keys()].forEach(clearBurst);
+reduced.addEventListener("change", clearBursts);
+touchPointer.addEventListener("change", clearBursts);
+addEventListener("pagehide", clearBursts);
+document.addEventListener("visibilitychange", () => { if (document.hidden) clearBursts(); });
+$$("[data-mobile-joy]").forEach((joy) => {
+  const button = $("[data-joy-button]", joy)!;
+  const status = $("[data-joy-status]", joy)!;
+  button.addEventListener("click", () => {
+    const delighted = joy.classList.toggle("is-delighted");
+    status.textContent = delighted ? "A little sunshine for your day." : "Thanks for stopping by.";
+    celebrate(button);
+  });
+});
+
+/* ---------------------------------------------------------------- Touch: a little hello, no scroll gestures */
+const hello = $("[data-hello]");
+if (hello) {
+  const button = $<HTMLButtonElement>("[data-hello-button]", hello)!;
+  const message = $("[data-hello-message]", hello)!;
+  const face = $(".hello__face", hello)!;
+  const eyes = $$(".hello__eye", hello);
+  const glyphs = $$(".ch__glyph");
+  const messages = ["Hi there!", "Thanks for stopping by.", "Have a look at what I’m building."];
+  let count = 0;
+  let animations: Animation[] = [];
+  const stop = () => {
+    animations.forEach((animation) => animation.cancel());
+    animations = [];
+  };
+  button.addEventListener("click", () => {
+    message.textContent = messages[count++ % messages.length];
+    hello.classList.add("is-happy");
+    hello.classList.toggle("is-nerd", count % 3 === 2);
+    celebrate(button);
+    stop();
+    if (reduced.matches) return;
+    animations.push(face.animate([
+      { transform: "rotate(0deg)" }, { transform: "rotate(-10deg)", offset: 0.3 },
+      { transform: "rotate(7deg)", offset: 0.65 }, { transform: "rotate(0deg)" },
+    ], { duration: 380, easing: "ease-in-out" }));
+    animations.push(eyes[1].animate([
+      { transform: "scaleY(1)" }, { transform: "scaleY(0.15)", offset: 0.45 }, { transform: "scaleY(1)" },
+    ], { duration: 280, easing: "ease-out" }));
+    glyphs.forEach((glyph, i) => animations.push(glyph.animate([
+      { transform: "translateY(0)" }, { transform: "translateY(-0.045em)", offset: 0.4 },
+      { transform: "translateY(0)" },
+    ], { duration: 340, delay: i * 24, easing: "cubic-bezier(0.23, 1, 0.32, 1)" })));
+  });
+  reduced.addEventListener("change", stop);
+  finePointer.addEventListener("change", stop);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
 }
 
 /* ---------------------------------------------------------------- Hero: portrait depth */
@@ -558,7 +698,6 @@ if (route) {
 $$("[data-print]").forEach((b) => b.addEventListener("click", () => print()));
 
 reduced.addEventListener("change", () => {
-  $$(".ch").forEach((el) => el.style.removeProperty("--wg"));
   $$("[data-depth]").forEach((el) => {
     el.style.removeProperty("--px");
     el.style.removeProperty("--py");

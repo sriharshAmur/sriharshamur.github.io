@@ -9,59 +9,162 @@ export const profile = {
   location: "Enschede, the Netherlands",
   timezone: "Europe/Amsterdam",
   email: "sriharshamur@gmail.com",
-  phone: "+31 645363925",
   links: {
     github: "https://github.com/sriharshAmur",
     linkedin: "https://www.linkedin.com/in/sriharsh-amur/",
   },
   intro:
-    "I build web products end to end, from the interface people touch to the services and pipelines behind it. Right now that means ordering software at Just Eat Takeaway.",
+    "I build the pages customers order through, the monitoring that tells us when they break, and the AI tools that help engineers find out why. Before that, I owned three Tableau extensions end to end.",
   summary:
-    "Full-stack developer with five years of professional experience across product front ends, backend services and data visualisation. I've shipped React and Vue applications used inside Tableau and Power BI, built services in Go, Node.js and Kotlin, owned products as a Product Owner, and spoken at Tableau Conference. I care about software that feels quick, reads clearly, and holds up in production.",
+    "Full-stack developer with five years of professional experience across product front ends, backend services and data visualisation. I've shipped React and Vue applications used inside Tableau and Power BI, built services in Go, Node.js and Kotlin, owned three products end to end, and spoken at Tableau Conference. I care about software that feels quick, reads clearly, and holds up in production.",
+};
+
+// One sentence per achievement. `highlight` must appear verbatim in `text`;
+// the CV sets it apart so the outcome is what a reader's eye lands on.
+export type Achievement = {
+  text: string;
+  highlight?: string;
+};
+
+export const companyLogos = {
+  jet: "/img/brands/jet.svg",
+  appsForTableau: "/img/brands/apps-for-tableau.png",
 };
 
 export type Role = {
+  logo: keyof typeof companyLogos;
   title: string;
   company: string;
   place: string;
   start: string;
   end: string;
   startYear: number;
-  points: string[];
-  tools: string[];
+  points: Achievement[];
 };
 
 export const experience: Role[] = [
   {
     title: "Full-stack developer",
     company: "Just Eat Takeaway.com",
+    logo: "jet",
     place: "Enschede",
     start: "Sept 2024",
     end: "Present",
     startYear: 2024,
     points: [
-      "Build and maintain React applications, migrating legacy components and shipping new features with Redux and Redux-Saga.",
-      "Build and run backend microservices in Spring Boot (Kotlin) on Kafka, SNS/SQS and DynamoDB.",
-      "Contribute to the migration of services to a hexagonal architecture, separating domain logic from infrastructure.",
+      {
+        text: "Built AI workflows that read a week of customer feedback and Datadog dashboards and write interactive reports for web engineers. They have caught production incidents.",
+        highlight: "caught production incidents",
+      },
+      {
+        text: "Took key pages from almost no observability to full coverage, architected per micro frontend: RUM, dashboards, synthetic checks and 25 monitors paging Slack and PagerDuty.",
+        highlight: "almost no observability to full coverage",
+      },
+      {
+        text: "Halved p75 Largest Contentful Paint from 2.2s to 1.1s using production telemetry, unblocking a rollout stuck at 50%.",
+        highlight: "2.2s to 1.1s",
+      },
+      {
+        text: "Led the migration from CodeceptJS to Playwright across two teams, with an MQTT5 mock broker for testing live order updates in CI.",
+        highlight: "CodeceptJS to Playwright",
+      },
+      {
+        text: "Measured real consent choices with RUM before a planned rework, showed it touched about 1,000 users a month, and moved the time to higher-impact work.",
+        highlight: "about 1,000 users a month",
+      },
+      {
+        text: "Owned production incidents through to resolution, including a customer-data privacy issue coordinated across security, platform and observability teams.",
+      },
+      {
+        text: "Shipped across the stack, from the React post-order experience now default for all web users to Kotlin, Kafka and DynamoDB fixes in live order routing.",
+      },
     ],
-    tools: ["React", "Redux-Saga", "Kotlin", "Spring Boot", "Kafka", "SNS/SQS", "DynamoDB"],
   },
   {
-    title: "Web developer and Product Owner",
-    company: "AppsForTableau, Infotopics",
+    title: "Software developer",
+    company: "AppsForTableau",
+    logo: "appsForTableau",
     place: "Hardenberg",
     start: "Sept 2021",
     end: "Aug 2024",
     startYear: 2021,
     points: [
-      "Developed Tableau and Power BI extensions in React and Vue.",
-      "Built backend services and desktop applications in Go and Node.js.",
-      "Led three extensions as Product Owner: features, roadmaps and client relationships, including sales and support calls.",
-      "Spoke at Tableau Conference 2024 in San Diego about VizExtensions.",
+      {
+        text: "Grew from developer to owner of three extensions, setting direction, estimating every feature and leading delivery with product management.",
+        highlight: "owner of three extensions",
+      },
+      {
+        text: "Became the technical voice on customer calls, turning feedback into features and following up with clients until they shipped.",
+      },
+      {
+        text: "Rebuilt a sprawl of features into guided products with wizards, tooltips and faster rendering, then added AI-assisted analysis and sparklines to SuperTables.",
+        highlight: "AI-assisted analysis",
+      },
+      {
+        text: "Built React and Vue extensions for Tableau and Power BI, with the Go and Node.js services behind them.",
+      },
     ],
-    tools: ["React", "Vue", "TypeScript", "Go", "Node.js", "Tableau", "Power BI"],
   },
 ];
+
+export const cv = {
+  description:
+    "Sri Harsh Amur, full-stack developer building AI developer tools, frontends and observability that hold up in production.",
+  lede:
+    "At Just Eat Takeaway.com, I build the pages customers order through, the monitoring that tells us when they break, and the AI tools that help engineers find out why.",
+  skills: [
+    {
+      icon: "design",
+      label: "Design",
+      line: "Sketch the flow in Figma, then build it to the pixel.",
+      tools: ["Figma", "Prototyping", "Design systems", "UX writing"],
+    },
+    {
+      icon: "frontend",
+      label: "Frontend",
+      line: "Fast, accessible interfaces across micro frontends, tuned with real-user data.",
+      tools: ["TypeScript", "React", "Vue", "Next.js", "Core Web Vitals"],
+    },
+    {
+      icon: "backend",
+      label: "Backend",
+      line: "Event-driven services and APIs behind live order flows.",
+      tools: ["Kotlin", "Spring Boot", "Go", "Node.js", "Kafka", "DynamoDB"],
+    },
+    {
+      icon: "observability",
+      label: "Observability",
+      line: "Monitoring built around user journeys, so problems surface before customers report them.",
+      tools: ["Datadog RUM", "APM", "Synthetics", "Alerting", "PagerDuty"],
+    },
+    {
+      icon: "ai",
+      label: "AI & tooling",
+      line: "LLM workflows and test and release tooling that make a whole team faster.",
+      tools: ["LLM agents", "Playwright", "GitHub Actions", "Cloudflare Workers"],
+    },
+  ],
+  projects: [
+    {
+      slug: "long-exposure",
+      detail: "Turns a Google Maps Timeline export into a story of everywhere you have lived and travelled. Parses 190,000 points in about a second, without the file leaving the browser.",
+      tools: ["MapLibre GL", "Web Workers", "SVG"],
+    },
+    {
+      slug: "munch",
+      detail: "Plays a year of food-delivery orders back as stories, charts and a guess at your next order. One TypeScript core powers both the CLI and the web app.",
+      tools: ["TypeScript", "Bun", "React"],
+    },
+  ],
+  speaking: {
+    event: "Tableau Conference 2024",
+    place: "San Diego",
+    year: "2024",
+    title: "How to build your first viz extension",
+    detail: "A hands-on session teaching developers to build and ship their own Tableau extension.",
+    href: "https://content-appsfortableau.infotopics.com/tc24",
+  },
+};
 
 export const education = [
   {
@@ -145,7 +248,7 @@ export const work: Work[] = [
       alt: "Munch's home page: a row of story rings above the headline “87 orders since November 2025”",
     },
     coverNote: "Screenshots use a fictional demo person, with made-up orders from made-up restaurants.",
-    tint: "#21161f",
+    tint: "#25221f",
     links: [
       { label: "Open Munch", href: "/munch/" },
       { label: "Source on GitHub", href: "https://github.com/sriharshAmur/munch" },
@@ -180,7 +283,7 @@ export const work: Work[] = [
     tools: ["JavaScript", "Web Workers", "MapLibre GL", "SVG", "Cloudflare Workers"],
     cover: { type: "image", src: "/img/work/long-exposure/hero.jpg", alt: "Years of location history glowing as points on a dark world map" },
     coverNote: "Screenshots use a fictional demo person, with made-up location history.",
-    tint: "#1b2142",
+    tint: "#1d1f22",
     links: [
       { label: "Open Long Exposure", href: "/long-exposure/" },
       { label: "Source on GitHub", href: "https://github.com/sriharshAmur/long-exposure" },
@@ -210,21 +313,21 @@ export const work: Work[] = [
     year: "2021 – 2024",
     tagline: "Visuals and workflows the BI tools don't ship with.",
     summary:
-      "Three years building extensions that run inside Tableau and Power BI dashboards, and owning three of them as Product Owner. Ended with a talk at Tableau Conference 2024.",
+      "Three years building extensions that run inside Tableau and Power BI dashboards, and owning three of them end to end. Ended with a talk at Tableau Conference 2024.",
     tools: ["React", "Vue", "TypeScript", "Go", "Node.js", "Tableau Extensions API"],
     cover: { type: "mock", variant: "viz" },
-    tint: "#2849c9",
+    tint: "#2d2a26",
     links: [{ label: "AppsForTableau", href: "https://appsfortableau.com/" }],
     problem:
       "Analysts build their reporting inside Tableau and Power BI, but the built-in charts and interactions only go so far. Extensions fill the gap, and they have to feel native, render quickly on large data, and work across many customers' setups.",
     approach: [
       "Built extension front ends in React and Vue that run inside the host dashboard and respond to its filters and selections.",
       "Wrote the backend services and desktop applications behind them in Go and Node.js.",
-      "As Product Owner for three extensions, set roadmaps, prioritised features and spoke directly with clients on sales and support calls.",
+      "As owner of three extensions, set roadmaps, prioritised features and spoke directly with clients on sales and support calls.",
       "Presented VizExtensions on stage at Tableau Conference 2024 in San Diego.",
     ],
     outcome:
-      "Extensions used by Tableau and Power BI customers, shaped by direct conversations with the people using them. The Product Owner role taught me to weigh what to build as carefully as how to build it.",
+      "Extensions used by Tableau and Power BI customers, shaped by direct conversations with the people using them. Owning products taught me to weigh what to build as carefully as how to build it.",
   },
   {
     slug: "hireo",
@@ -259,7 +362,7 @@ export const work: Work[] = [
       "A real-time chat application with teams, channels and private messages, built on React and Firebase.",
     tools: ["React", "Firebase", "Tailwind"],
     cover: { type: "mock", variant: "chat" },
-    tint: "#5b5fc7",
+    tint: "#2d2a26",
     links: [
       { label: "Live demo", href: "https://teams-sigma.vercel.app/" },
       { label: "Source", href: "https://github.com/sriharshAmur/teams" },

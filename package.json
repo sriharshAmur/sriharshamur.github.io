@@ -15,6 +15,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "export:cv": "npm run build && node scripts/export-cv.mjs",
     "check": "tsc --noEmit",
     "preview": "astro preview",
     "deploy": "npm run build && wrangler deploy",

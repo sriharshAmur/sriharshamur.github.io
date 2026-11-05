@@ -1,0 +1,29 @@
+<!-- A touch-only invitation. No timers, autoplay, or intercepted scroll gestures. -->
+<div class="mobile-joy" data-mobile-joy>
+  <button class="mobile-joy__button" type="button" data-joy-button aria-label="Make the sunshine smile">
+    <svg class="mobile-joy__sun" viewBox="0 0 72 72" width="64" height="64" aria-hidden="true">
+      <g class="mobile-joy__rays" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+        <path d="M36 3v5m0 56v5M3 36h5m56 0h5M13 13l4 4m38 38 4 4M13 59l4-4m38-38 4-4" />
+      </g>
+      <circle cx="36" cy="36" r="23" fill="currentColor" />
+      <g fill="var(--on-gold)"><ellipse cx="28" cy="32" rx="2.5" ry="3.5" /><ellipse class="mobile-joy__wink" cx="44" cy="32" rx="2.5" ry="3.5" /></g>
+      <path class="mobile-joy__smile" d="M26 42q10 13 20 0" fill="none" stroke="var(--on-gold)" stroke-width="2.5" stroke-linecap="round" />
+    </svg>
+  </button>
+  <p class="ui" data-joy-status aria-live="polite">Tap for a little sunshine.</p>
+</div>
+<style>
+  .mobile-joy { display: none; }
+  @media (hover: none), (pointer: coarse) {
+    :global(.js) .mobile-joy { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .mobile-joy__button { position: relative; flex: none; width: 72px; height: 72px; display: grid; place-items: center; color: var(--marigold); touch-action: manipulation; border-radius: 50%; transition: transform 120ms var(--ease-out); }
+    .mobile-joy__button:active { transform: scale(0.94); }
+    .mobile-joy p { max-width: 22ch; font-size: 0.85rem; line-height: 1.45; }
+    .mobile-joy__wink { transform-box: fill-box; transform-origin: center; transition: transform 180ms var(--ease-out); }
+    .is-delighted .mobile-joy__wink { transform: scaleY(0.15); }
+    .mobile-joy__rays { transform-origin: 36px 36px; transition: transform 500ms var(--ease-out); }
+    .is-delighted .mobile-joy__rays { transform: rotate(45deg); }
+  }
+  @media (prefers-reduced-motion: reduce) { .mobile-joy__button:active { transform: none; } .is-delighted .mobile-joy__rays { transform: none; } }
+  @media print { .mobile-joy { display: none !important; } }
+</style>

@@ -1,4 +1,5 @@
 ---
+import CompanyLogo from "./CompanyLogo.astro";
 // The route so far, in order. Years are real markers here: this is a sequence.
 const stops = [
   {
@@ -17,7 +18,8 @@ const stops = [
     year: "2021",
     place: "Hardenberg",
     title: "AppsForTableau, Infotopics",
-    text: "Started building Tableau and Power BI extensions, and grew into owning three of them as Product Owner.",
+    logo: "appsForTableau" as const,
+    text: "Started building Tableau and Power BI extensions, and grew into owning three of them end to end.",
   },
   {
     year: "2024",
@@ -29,6 +31,7 @@ const stops = [
     year: "2024",
     place: "Enschede",
     title: "Just Eat Takeaway.com",
+    logo: "jet" as const,
     text: "Joined as a full-stack developer, working across React front ends and Kotlin services.",
   },
   {
@@ -54,7 +57,7 @@ const stops = [
             <span class="stop__dot" aria-hidden="true" />
             <span class="stop__year display">{s.year}</span>
             <div class="stop__body">
-              <h3 class="stop__title">{s.title}</h3>
+              <h3 class="stop__title">{s.logo && <CompanyLogo company={s.logo} />}{s.title}</h3>
               <p class="stop__place ui">{s.place}</p>
               <p class="stop__text muted">{s.text}</p>
             </div>
@@ -131,7 +134,7 @@ const stops = [
     box-shadow: 0 0 0 5px color-mix(in srgb, var(--marigold) 25%, transparent);
   }
   .stop--now.is-past .stop__dot {
-    background: #2fb36a;
+    background: var(--success);
     box-shadow: 0 0 0 5px rgb(47 179 106 / 0.22);
   }
   .stop__year {
@@ -164,6 +167,9 @@ const stops = [
     transform: none;
   }
   .stop__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     font-size: clamp(1.4rem, 2.4vw, 1.9rem);
   }
   .stop__place {

@@ -1,0 +1,28 @@
+---
+// One line-icon set for the CV: 24px grid, 1.7 stroke, round joins.
+const icons = {
+  mail: ["M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z", "m3.5 6.5 8.5 6.5 8.5-6.5"],
+  globe: ["M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z", "M3 12h18", "M12 3c4.5 5 4.5 13 0 18-4.5-5-4.5-13 0-18Z"],
+  linkedin: ["M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z", "M8 10.5V17", "M8 7v.01", "M12 17v-6.5", "M12 13.5a2.5 2.5 0 0 1 5 0V17"],
+  github: [
+    "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4",
+    "M9 18c-4.51 2-5-2-7-2",
+  ],
+  location: ["M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z", "M15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"],
+  download: ["M12 3v12", "m7 10 5 5 5-5", "M5 16v4h14v-4"],
+  external: ["M7 17 17 7", "M8 7h9v9"],
+  design: ["M4 20C8 12 16 12 20 4", "M2.5 18.5h3v3h-3Z", "M18.5 2.5h3v3h-3Z", "M4 20h7"],
+  frontend: ["M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z", "M3 9h18", "M7 13.5 5.5 15 7 16.5", "M11 13.5l1.5 1.5-1.5 1.5"],
+  backend: ["M5 3h14a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z", "M5 14h14a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1Z", "M8 6.5h.01", "M8 17.5h.01"],
+  observability: ["M3 12h4l2.5-6 5 12 2.5-6h4"],
+  ai: ["M11 3.5 12.6 9l5.4 1.6-5.4 1.6L11 17.5l-1.6-5.3L4 10.6 9.4 9Z", "M19 15v5", "M16.5 17.5h5"],
+  speaking: ["M9 5a3 3 0 0 1 6 0v6a3 3 0 0 1-6 0Z", "M5 10v1a7 7 0 0 0 14 0v-1", "M12 18v3", "M9 21h6"],
+  education: ["m2 9 10-5 10 5-10 5Z", "M6 11v5c3.5 2.5 8.5 2.5 12 0v-5", "M22 9v6"],
+} as const;
+export type CvIconName = keyof typeof icons;
+interface Props { name: CvIconName; class?: string; }
+const { name, class: className } = Astro.props;
+---
+<svg class:list={["cv-icon", className]} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {icons[name].map((d) => <path d={d} />)}
+</svg>

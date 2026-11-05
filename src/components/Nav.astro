@@ -8,7 +8,7 @@ const items = [
   { href: onHome ? "#work" : "/#work", label: "Work", key: "work" },
   { href: onHome ? "#stack" : "/#stack", label: "Stack", key: "stack" },
   { href: onHome ? "#path" : "/#path", label: "Path", key: "path" },
-  { href: "/cv", label: "CV", key: "cv" },
+  { href: "/cv/", label: "CV", key: "cv" },
 ];
 ---
 
@@ -83,7 +83,7 @@ const items = [
     background: color-mix(in srgb, var(--surface) 78%, transparent);
     backdrop-filter: blur(14px) saturate(1.4);
     -webkit-backdrop-filter: blur(14px) saturate(1.4);
-    box-shadow: 0 0 0 1px var(--line), 0 12px 32px -18px rgb(22 26 51 / 0.45);
+    box-shadow: 0 0 0 1px var(--line), 0 12px 32px -18px rgb(var(--shadow) / 0.45);
     font-size: 0.95rem;
   }
   .nav__mark {

@@ -88,7 +88,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
     }
 
     <nav class="wrap next" aria-label="Next project">
-      <a class="next__link" href={`/work/${next.slug}`}>
+      <a class="next__link" href={`/work/${next.slug}/`}>
         <span class="next__label ui muted">Next project</span>
         <span class="next__title stretch" data-stretch>{next.title}</span>
       </a>
@@ -233,7 +233,7 @@ const image = item.cover.type === "image" ? item.cover.src : undefined;
     width: 100%;
     height: auto;
     border-radius: var(--radius-m);
-    box-shadow: 0 30px 60px -35px rgb(15 18 38 / 0.6);
+    box-shadow: 0 30px 60px -35px rgb(var(--shadow) / 0.6);
   }
   .shot figcaption {
     margin-top: 0.8rem;
