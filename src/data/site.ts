@@ -13,6 +13,11 @@ import longExposureHomes from "../assets/work/long-exposure/homes.jpg";
 import longExposurePlaces from "../assets/work/long-exposure/places.jpg";
 import longExposureYears from "../assets/work/long-exposure/years.jpg";
 import longExposureDay from "../assets/work/long-exposure/day.jpg";
+import journalHero from "../assets/work/journal/hero.jpg";
+import journalExplore from "../assets/work/journal/explore.jpg";
+import journalJournal from "../assets/work/journal/journal.jpg";
+import journalMemory from "../assets/work/journal/memory.jpg";
+import journalLanding from "../assets/work/journal/landing.jpg";
 
 export const profile = {
   name: "Sri Harsh Amur",
@@ -245,6 +250,44 @@ export type Work = {
 };
 
 export const work: Work[] = [
+  {
+    slug: "journal",
+    title: "Journal",
+    kind: "Personal project",
+    year: "2026",
+    featured: true,
+    tagline: "A quiet place to write, that remembers where you've been.",
+    summary:
+      "A journal that reads like a lamplit desk: one page to write on, a look back over your months, and an AI that only ever speaks with your own words as its sources. Built on Cloudflare Workers and D1, then tuned until every page opens in one round trip.",
+    tools: ["TypeScript", "React 19", "Vite", "Hono", "Cloudflare Workers", "D1", "Better Auth", "Zod"],
+    cover: {
+      type: "image",
+      src: journalHero,
+      alt: "Journal's Write page: a greeting in italic serif above a blank page lit from one side, with a quiet toolbar",
+    },
+    coverNote: "Screenshots show the public demo's fictional entries, never a real journal.",
+    tint: "#1f2b2a",
+    links: [
+      { label: "Try the demo", href: "https://journal.sriharsh.com/demo" },
+    ],
+    problem:
+      "Most journaling apps feel like software: forms, streaks, scores, a dashboard of your own life. I wanted a place that felt safe to be honest in and worth coming back to, where an AI could help me notice patterns without ever putting words in my mouth. The first version had the right ideas but looked like a generic web app, and on a real connection every click waited a second or more.",
+    approach: [
+      "A design system I call the reading lamp: linen paper, inkwell text, a mulberry bookmark, Newsreader for anything you read and Figtree for anything you operate. One pool of warm light stands behind the page, and the room darkens on its own in the evening.",
+      "Explore was rebuilt as a look back rather than a dashboard. One mark per week sized by how much was written, reflections hanging on a thread, what helped and what was hard as two equal slips of paper, people and feelings as clouds of words. Nothing is scored, weighed or coloured good or bad.",
+      "The same vocabulary was carried through every page: titles at display size, ledes in the page's own italic voice, entries read on the paper they were written on, memories marked by whether they are your words or the model's reading, and a landing page that is the same room seen from the doorway.",
+      "Then the speed, measured before touched. The API was quick locally but slow deployed, because each request chained several sequential trips from the edge to the database, and the client loaded its code in two hops before asking for anything. The fixes were structural: one batched database round trip per route, the session carried in a signed cookie, the session request started before the app script arrives, one static bundle, and the model SDK loaded only on first use, which halved the Worker's startup script.",
+      "Finally, the feel of clicking around. Hovering or pressing a navigation link starts that page's reads, and a short read cache hands them to the page when it mounts, so most pages arrive with their data already in hand.",
+    ],
+    outcome:
+      "Every page now opens in one or two round trips instead of six or more, the Worker's startup script went from 2.2 MB to 1.1 MB, and moving between pages feels immediate. More importantly it feels like mine: a warm, quiet room rather than a product. The design decisions and the latency rules are written down next to the code, so the next change keeps both.",
+    gallery: [
+      { src: journalExplore, alt: "The Explore page: a band of weekly marks, reflections on a thread, and two slips of paper", caption: "The look back: a mark per week, reflections on a thread, and two equal slips for what helped and what was hard." },
+      { src: journalJournal, alt: "The Journal page: a month of entries hanging on a vertical thread beside large day numerals", caption: "Each month's writing hangs on one thread: a knot for an entry, a ring for a conversation." },
+      { src: journalMemory, alt: "The Memory page: short sentences the journal remembers, each with a small mark in the margin", caption: "What the journal remembers, with a dashed amber ring wherever it is the model's reading rather than your words." },
+      { src: journalLanding, alt: "The landing page: a large serif headline beside a bound example page with a bookmark ribbon", caption: "The landing page is the same room seen from the doorway." },
+    ],
+  },
   {
     slug: "munch",
     title: "Munch",
