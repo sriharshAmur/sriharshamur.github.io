@@ -21,23 +21,34 @@ case studies. Home and `/cv` share this content. The personal introduction and
 career milestones live in `src/components/About.astro` and `Path.astro`.
 `/cv` includes a browser print / Save as PDF action with an A4 stylesheet.
 
-The CV uses a single reading column with outcome-led achievement bullets and
-selective bold emphasis. Its focused skills, projects and speaking selection live
-in the `cv` export in `src/data/site.ts`. It deliberately omits the profile,
-portrait, secondary school and older practice projects. The portfolio retains its
-broader content. JET claims follow the November 2026 verified evidence report;
-internal reviews, ticket references and unverified impact estimates are excluded.
-Anybody headings and Newsreader body copy connect it to the portfolio. Delft-blue
-section icons and employer headers establish hierarchy, with marigold highlights
-on selected verified results. Official employer marks and explicit technology
-labels make roles easier to scan. The same accents carry through to the PDF.
+The CV pairs employer details with outcome-led achievement bullets and selective
+bold emphasis. Its focused skills, projects and speaking selection live in the
+`cv` export in `src/data/site.ts`. The web header shares the homepage portrait and
+marigold circle; the photo is excluded from the PDF. The document uses Public Sans,
+a clear name and contact header, blue titles and links, dark-blue body text, and
+small line icons for contacts and sections, all on plain white with no coloured
+backgrounds or highlight fills. Secondary school and older practice projects
+stay on the portfolio. JET claims follow the November 2026 verified evidence
+report; internal reviews, ticket references and unverified impact estimates are
+excluded.
 
-For a two-page PDF generated from the actual CV page, run `npm run export:cv`.
+For a one-page PDF generated from the actual CV page, run `npm run export:cv`.
 This builds the site and writes `output/pdf/Sri-Harsh-Amur-CV.pdf` using local
 Chrome or Chromium. Set `CHROME_PATH` if the executable is in a nonstandard
-location. CSS, fonts and employer logos are embedded for export; no development server is needed.
-Generated exports are git-ignored. The print layout begins earlier experience on
-page two and preserves selectable text and clickable contact/project links.
+location. CSS, fonts and images are embedded for export; no development server is
+needed. Generated exports are git-ignored. The A4 print layout leads with experience,
+then projects, skills, speaking and education. Its concise summary, selected
+achievement bullets and project descriptions live alongside the full web copy in
+`src/data/site.ts` (`printSummary`, `printExperience` and `printDetail`). The website
+keeps the longer evidence; the PDF is edited for scanning rather than squeezed to
+fit with tiny type. Journal, Long Exposure and Munch are selected from the shared project
+data, including their actual app and public source links. Website logos,
+screenshots, badges and animations are omitted from print; skills become concise
+technology lists. Employers, education, contact details, projects, case studies,
+public repositories and named technologies have clickable links. External
+destinations are maintained in `src/data/cv-links.ts`. The PDF uses readable body
+text, keeps entries together, and preserves selectable text. Print colours stay
+consistent in light and dark mode.
 
 The shared palette uses blue (`#1766c1`), marigold (`#ffba38`), porcelain
 (`#f2f5f7`) and charcoal ink (`#18242c`). Dark mode uses neutral charcoal

@@ -130,6 +130,23 @@ export const cv = {
     "Sri Harsh Amur, full-stack developer building AI developer tools, frontends and observability that hold up in production.",
   lede:
     "At Just Eat Takeaway.com, I build the pages customers order through, the monitoring that tells us when they break, and the AI tools that help engineers find out why.",
+  // The download is an edited one-page CV; the web page keeps the full evidence.
+  printSummary:
+    "Five years building customer-facing products, backend services and developer tooling, with a focus on web performance, production reliability and AI workflows.",
+  printExperience: {
+    jet: [
+      { text: "Halved p75 Largest Contentful Paint from 2.2s to 1.1s, unblocking a rollout stalled at 50%.", highlight: "2.2s to 1.1s" },
+      { text: "Built AI workflows that turn customer feedback and Datadog data into reports, catching production incidents.", highlight: "catching production incidents" },
+      { text: "Established observability across key micro frontends: RUM, synthetic checks and 25 monitors with Slack and PagerDuty alerts.", highlight: "25 monitors" },
+      { text: "Led Playwright adoption across two teams; built an MQTT5 mock broker to test live order updates.", highlight: "across two teams" },
+      { text: "Shipped the React post-order experience for all web users and Kotlin, Kafka and DynamoDB fixes for live order routing." },
+    ],
+    appsForTableau: [
+      { text: "Owned three Tableau extensions end to end: product direction, estimates, delivery and customer feedback.", highlight: "Owned three Tableau extensions" },
+      { text: "Built React and Vue extensions for Tableau and Power BI, backed by Go and Node.js services." },
+      { text: "Built guided product flows; added AI-assisted analysis and sparklines to SuperTables." },
+    ],
+  } satisfies Record<keyof typeof companyLogos, Achievement[]>,
   skills: [
     {
       icon: "design",
@@ -164,13 +181,21 @@ export const cv = {
   ],
   projects: [
     {
+      slug: "journal",
+      detail: "Built a private journaling app with Google sign-in, searchable entries and AI reflections grounded in the writer’s own words. Runs on Cloudflare Workers with D1 and R2; a separate browser-only demo uses fictional data.",
+      printDetail: "Private journaling with Google sign-in, searchable entries and AI reflections grounded in the writer’s own words. Built on Cloudflare Workers, D1 and R2.",
+      tools: ["TypeScript", "React", "Hono", "Better Auth", "Cloudflare Workers", "D1", "R2"],
+    },
+    {
       slug: "long-exposure",
       detail: "Turns a Google Maps Timeline export into a story of everywhere you have lived and travelled. Parses 190,000 points in about a second, without the file leaving the browser.",
+      printDetail: "Turns Google Maps Timeline exports into an interactive travel history. Processes 190,000 points in about a second, entirely in the browser.",
       tools: ["MapLibre GL", "Web Workers", "SVG"],
     },
     {
       slug: "munch",
       detail: "Plays a year of food-delivery orders back as stories, charts and a guess at your next order. One TypeScript core powers both the CLI and the web app.",
+      printDetail: "Turns food-delivery history into stories, analysis and order predictions. One TypeScript core powers the CLI and React app.",
       tools: ["TypeScript", "Bun", "React"],
     },
   ],

@@ -3,15 +3,22 @@ import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import CompanyLogo from "../components/CompanyLogo.astro";
 import CvHighlight from "../components/CvHighlight.astro";
+import CvTechnologies from "../components/CvTechnologies.astro";
 import CvIcon, { type CvIconName } from "../components/CvIcon.astro";
+import portrait from "../assets/portrait.png";
 import { profile, experience, education, cv, work } from "../data/site";
+import { employerLinks, universityLink, courseLink } from "../data/cv-links";
 import "../styles/cv.css";
 
 const selectedProjects = cv.projects.map((selection) => {
   const project = work.find((item) => item.slug === selection.slug);
   if (!project) throw new Error(`Unknown CV project: ${selection.slug}`);
   if (project.cover.type !== "image") throw new Error(`CV project needs a cover image: ${selection.slug}`);
-  return { ...project, cover: project.cover, detail: selection.detail, stack: selection.tools };
+  const liveLink = project.links.find((link) => !link.href.includes("github.com"));
+  if (!liveLink) throw new Error(`CV project needs a live link: ${selection.slug}`);
+  const href = new URL(liveLink.href, "https://sriharsh.com").href;
+  const sourceLink = project.links.find((link) => link.href.includes("github.com"));
+  return { ...project, cover: project.cover, detail: selection.detail, printDetail: selection.printDetail, stack: selection.tools, href, sourceLink };
 });
 const school = education[0];
 const contacts: { icon: CvIconName; label: string; href: string; print?: string }[] = [
@@ -26,8 +33,11 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
   <div class="cv-shell">
     <article class="cv" aria-label="Curriculum vitae">
       <header class="cv-head">
-        <h1 data-reveal style="--i:0">{profile.name}</h1>
-        <p class="cv-lede" data-reveal style="--i:1">{cv.lede}</p>
+        <div class="cv-portrait">
+          <Image src={portrait} alt={`Portrait of ${profile.name}`} width={460} format="webp" loading="eager" />
+        </div>
+        <h1 data-reveal style="--i:0"><a href="https://sriharsh.com/">{profile.name}</a></h1>
+        <p class="cv-lede" data-reveal style="--i:1"><span class="cv-web-copy">{cv.lede}</span><span class="cv-print-copy">{cv.printSummary}</span></p>
         <p class="cv-role" data-reveal style="--i:2">{profile.role}<span class="cv-place"><CvIcon name="location" />{profile.location}</span></p>
         <ul class="cv-contact" role="list" data-reveal style="--i:3">
           {contacts.map((item) => (
@@ -40,14 +50,14 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
         </button>
       </header>
 
-      <section class="cv-section" aria-labelledby="experience-title">
-        <h2 id="experience-title">Experience</h2>
+      <section class="cv-section cv-experience" aria-labelledby="experience-title">
+        <h2 id="experience-title"><CvIcon name="experience" class="cv-section-icon" />Experience</h2>
         {experience.map((role) => (
           <div class="job" data-reveal>
             <div class="job-meta">
               <CompanyLogo company={role.logo} />
               <div>
-                <h3>{role.company}</h3>
+                <h3><a href={employerLinks[role.logo]}>{role.company}</a></h3>
                 <p class="job-role">{role.title}</p>
                 <p class="when">
                   {role.start} – {role.end}
@@ -56,65 +66,72 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
                 </p>
               </div>
             </div>
-            <ul class="points">
+            <ul class="points cv-web-copy">
               {role.points.map((point) => <li><CvHighlight text={point.text} highlight={point.highlight} /></li>)}
+            </ul>
+            <ul class="points cv-print-copy">
+              {cv.printExperience[role.logo].map((point) => <li><CvHighlight text={point.text} highlight={"highlight" in point ? point.highlight : undefined} /></li>)}
             </ul>
           </div>
         ))}
       </section>
 
-      <section class="cv-section" aria-labelledby="skills-title">
-        <h2 id="skills-title">Skills</h2>
+      <section class="cv-section cv-projects" aria-labelledby="projects-title">
+        <h2 id="projects-title"><CvIcon name="projects" class="cv-section-icon" />Projects</h2>
+        <div class="projects">
+          {selectedProjects.map((project, i) => (
+            <article class="project" data-reveal style={`--i:${i * 2}`}>
+              <a class="project-shot" href={project.href} aria-label={`Open ${project.title}`}><Image src={project.cover.src} alt="" width={800} format="webp" /></a>
+              <div class="project-body">
+                <div class="project-title">
+                  <h3><a href={project.href}>{project.title}</a></h3>
+                  <div class="project-links">
+                    <a class="project-link" href={project.href}><span class="cv-web-copy">{project.href.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span><span class="cv-print-copy">Live app</span><CvIcon name="external" /></a>
+                    {project.sourceLink && <a class="project-link" href={project.sourceLink.href}>GitHub<CvIcon name="github" /></a>}
+                    <a class="project-link project-case-study" href={`https://sriharsh.com/work/${project.slug}/`}>Case study<CvIcon name="external" /></a>
+                  </div>
+                </div>
+                <p class="project-detail"><span class="cv-web-copy">{project.detail}</span><span class="cv-print-copy">{project.printDetail}</span></p>
+                <CvTechnologies tools={project.stack} />
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="cv-section cv-skills" aria-labelledby="skills-title">
+        <h2 id="skills-title"><CvIcon name="skills" class="cv-section-icon" />Skills</h2>
         <ol class="span" role="list" data-stretch>
           {cv.skills.map((skill, i) => (
             <li class="span-step" data-reveal style={`--i:${i * 2 + 2}`}>
               <span class="span-icon"><CvIcon name={skill.icon as CvIconName} /></span>
               <h3>{skill.label}</h3>
               <p class="span-line">{skill.line}</p>
-              <ul class="tags" role="list">{skill.tools.map((tool) => <li>{tool}</li>)}</ul>
+              <CvTechnologies tools={skill.tools} />
             </li>
           ))}
         </ol>
       </section>
 
-      <section class="cv-section" aria-labelledby="projects-title">
-        <h2 id="projects-title">Projects</h2>
-        <div class="projects">
-          {selectedProjects.map((project, i) => (
-            <a class="project" data-reveal style={`--i:${i * 2}`} href={`https://sriharsh.com/${project.slug}/`}>
-              <div class="project-shot"><Image src={project.cover.src} alt="" width={800} format="webp" /></div>
-              <div class="project-body">
-                <div class="project-title">
-                  <h3>{project.title}</h3>
-                  <span class="project-link">sriharsh.com/{project.slug}<CvIcon name="external" /></span>
-                </div>
-                <p class="project-detail">{project.detail}</p>
-                <ul class="tags" role="list">{project.stack.map((tool) => <li>{tool}</li>)}</ul>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-
       <div class="cv-section cv-pair" data-reveal>
         <section aria-labelledby="speaking-title">
-          <h2 id="speaking-title">Speaking</h2>
+          <h2 id="speaking-title"><CvIcon name="speaking" class="cv-section-icon" />Speaking</h2>
           <div class="credential">
             <span class="credential-icon"><CvIcon name="speaking" /></span>
             <div>
               <h3><a href={cv.speaking.href}>{cv.speaking.title}</a></h3>
-              <p class="credential-meta">{cv.speaking.event}, {cv.speaking.place}</p>
+              <p class="credential-meta"><a href={cv.speaking.href}>{cv.speaking.event}</a>, {cv.speaking.place}</p>
               <p class="credential-detail">{cv.speaking.detail}</p>
             </div>
           </div>
         </section>
         <section aria-labelledby="education-title">
-          <h2 id="education-title">Education</h2>
+          <h2 id="education-title"><CvIcon name="education" class="cv-section-icon" />Education</h2>
           <div class="credential">
             <span class="credential-icon"><CvIcon name="education" /></span>
             <div>
-              <h3>{school.detail}</h3>
-              <p class="credential-meta">{school.school}, {school.years}</p>
+              <h3><a href={courseLink}>{school.detail}</a></h3>
+              <p class="credential-meta"><a href={universityLink}>{school.school}</a>, {school.years}</p>
               <p class="credential-detail">{school.place}</p>
             </div>
           </div>
