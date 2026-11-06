@@ -1,0 +1,106 @@
+---
+import CvIcon, { type CvIconName } from "./CvIcon.astro";
+import CvHighlight from "./CvHighlight.astro";
+import CvTechnologies from "./CvTechnologies.astro";
+import { profile, experience, education, cv } from "../data/site";
+import { employerLinks, universityLink, courseLink } from "../data/cv-links";
+import "../styles/cv-document.css";
+
+interface Props {
+  projects: {
+    title: string;
+    slug: string;
+    href: string;
+    printDetail: string;
+    stack: string[];
+    sourceLink?: { href: string; label: string };
+  }[];
+}
+const { projects } = Astro.props;
+const school = education[0];
+const contacts: { icon: CvIconName; label: string; href: string }[] = [
+  { icon: "mail", label: profile.email, href: `mailto:${profile.email}` },
+  { icon: "globe", label: "sriharsh.com", href: "https://sriharsh.com" },
+  { icon: "linkedin", label: "LinkedIn", href: profile.links.linkedin },
+  { icon: "github", label: "GitHub", href: profile.links.github },
+];
+---
+
+{/* This document has its own markup and class names. It never joins the web layout. */}
+<article class="cv-document" aria-label="Printable curriculum vitae">
+  <header class="doc-head">
+    <h1><a href="https://sriharsh.com/">{profile.name}</a></h1>
+    <p class="doc-lede">{cv.printSummary}</p>
+    <p class="doc-role">{profile.role}<span class="doc-place"><CvIcon name="location" />{profile.location}</span></p>
+    <ul class="doc-contact" role="list">
+      {contacts.map((item) => <li><a href={item.href}><CvIcon name={item.icon} />{item.label}</a></li>)}
+    </ul>
+  </header>
+
+  <section class="doc-section" aria-labelledby="document-experience">
+    <h2 id="document-experience"><CvIcon name="experience" class="doc-section-icon" />Experience</h2>
+    {experience.map((role) => (
+      <div class="doc-job">
+        <div class="doc-job-meta">
+          <div>
+            <h3><a href={employerLinks[role.logo]}>{role.company}</a></h3>
+            <p class="doc-job-role">{role.title}</p>
+            <p class="doc-when">{role.start} – {role.end}<span class="doc-where">{role.place}</span></p>
+          </div>
+        </div>
+        <ul class="doc-points">
+          {cv.printExperience[role.logo].map((point) => <li><CvHighlight class="doc-highlight" text={point.text} highlight={"highlight" in point ? point.highlight : undefined} /></li>)}
+        </ul>
+      </div>
+    ))}
+  </section>
+
+  <section class="doc-section" aria-labelledby="document-projects">
+    <h2 id="document-projects"><CvIcon name="projects" class="doc-section-icon" />Projects</h2>
+    <div class="doc-projects">
+      {projects.map((project) => (
+        <article class="doc-project">
+          <div class="doc-project-title">
+            <h3><a href={project.href}>{project.title}</a></h3>
+            <div class="doc-project-links">
+              <a class="doc-project-link" href={project.href}>Live app<CvIcon name="external" /></a>
+              {project.sourceLink && <a class="doc-project-link" href={project.sourceLink.href}>GitHub<CvIcon name="github" /></a>}
+              <a class="doc-project-link" href={`https://sriharsh.com/work/${project.slug}/`}>Case study<CvIcon name="external" /></a>
+            </div>
+          </div>
+          <p class="doc-project-detail">{project.printDetail}</p>
+          <CvTechnologies class="doc-tags" tools={project.stack} />
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="doc-section" aria-labelledby="document-skills">
+    <h2 id="document-skills"><CvIcon name="skills" class="doc-section-icon" />Skills</h2>
+    <ol class="doc-span" role="list">
+      {cv.skills.map((skill) => (
+        <li class="doc-span-step">
+          <h3>{skill.label}</h3>
+          <CvTechnologies class="doc-tags" tools={skill.tools} />
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <div class="doc-section doc-pair">
+    <section aria-labelledby="document-speaking">
+      <h2 id="document-speaking"><CvIcon name="speaking" class="doc-section-icon" />Speaking</h2>
+      <div class="doc-credential">
+        <h3><a href={cv.speaking.href}>{cv.speaking.title}</a></h3>
+        <p class="doc-credential-meta"><a href={cv.speaking.href}>{cv.speaking.event}</a>, {cv.speaking.place}</p>
+      </div>
+    </section>
+    <section aria-labelledby="document-education">
+      <h2 id="document-education"><CvIcon name="education" class="doc-section-icon" />Education</h2>
+      <div class="doc-credential">
+        <h3><a href={courseLink}>{school.detail}</a></h3>
+        <p class="doc-credential-meta"><a href={universityLink}>{school.school}</a>, {school.years}</p>
+      </div>
+    </section>
+  </div>
+</article>

@@ -1,0 +1,95 @@
+/* Only the dedicated printable document uses these classes and tokens. */
+@media not print {
+  .cv-document { display: none !important; }
+}
+
+@media print {
+  @page { size: A4; margin: 11mm 15mm; }
+  .cv-document {
+    --sans: "Public Sans", Arial, sans-serif;
+    --paper: #fff; --paper-2: #fff; --surface: #fff;
+    --ink: #233c57; --ink-2: #365779; --ink-3: #46617e;
+    --line: #b9cadb; --accent: #155fa6; --accent-soft: transparent;
+    --cv-title: #134d86; --cv-emphasis: #155fa6;
+    font-size: 10pt;
+    color-scheme: light;
+  }
+  html:has(body[data-page="cv"]), body[data-page="cv"] { background: #fff; color-scheme: light; }
+  body[data-page="cv"] .nav, body[data-page="cv"] .skip, .cv-shell { display: none !important; }
+  .cv-document .cv-icon { display: inline-block; width: 3mm; height: 3mm; color: var(--accent); }
+  .cv-document { display: block; background: #fff; font-family: var(--sans); color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cv-document *, .cv-document *::before, .cv-document *::after { animation: none !important; transition: none !important; }
+  .cv-document [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .cv-document { width: 100%; margin: 0; font-size: 10pt; line-height: 1.4; }
+  .cv-document :where(h1, h2, h3, p, ul, ol) { margin: 0; padding: 0; }
+  .cv-document p { text-wrap: pretty; }
+  .cv-document .cv-icon { flex: none; }
+  .doc-head > h1, .doc-head > .doc-role { grid-column: 1; }
+  .doc-role { display: flex; flex-wrap: wrap; align-items: center; }
+  .doc-place { display: inline-flex; align-items: center; color: var(--ink-2); }
+  .doc-contact { list-style: none; padding: 0; color: var(--ink-2); }
+  .doc-when { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .doc-highlight { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .doc-project-title { flex-wrap: wrap; }
+  .doc-project-links { align-items: center; }
+  .doc-tags, .doc-span { list-style: none; }
+  .doc-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .doc-credential-meta { color: var(--ink-2); }
+  .cv-document h1, .cv-document h2, .cv-document h3 { font-family: var(--sans); text-wrap: auto; letter-spacing: normal; color: var(--ink); }
+  .cv-document a { color: inherit; text-decoration: none; }
+  .doc-head { display: grid; grid-template-columns: minmax(0, 1fr) 64mm; column-gap: 5mm; padding: 1.5mm 0; background: none; border-bottom: 1pt solid var(--accent); align-items: start; }
+  .cv-document h1 { grid-row: 1; font-size: 28pt; font-weight: 650; line-height: 1.1; letter-spacing: -0.035em; color: var(--cv-title); }
+  .doc-role { grid-row: 2; margin-top: 1.5mm; gap: 1mm 3mm; font-size: 11pt; font-weight: 500; color: var(--ink); }
+  .doc-place { font-size: 9pt; font-weight: 400; gap: 1mm; }
+  .cv-document .doc-head > .doc-contact { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+  .doc-contact { display: flex; flex-wrap: wrap; justify-content: flex-end; margin: 0; font-size: 9pt; gap: 1.5mm 4mm; }
+  .doc-contact a { display: inline-flex; align-items: center; gap: 1.2mm; color: var(--accent); }
+  .doc-contact .cv-icon { color: var(--accent); }
+  .doc-place .cv-icon { color: var(--accent); }
+  .cv-document .doc-head > .doc-lede { grid-column: 1 / -1; grid-row: 3; margin-top: 3mm; max-width: none; font-size: 10pt; line-height: 1.4; letter-spacing: normal; text-wrap: auto; }
+  .doc-section { margin-top: 4.25mm; }
+  .cv-document h2 { display: flex; align-items: center; gap: 1.8mm; margin-bottom: 2mm; padding: 0.3mm 0; border: 0; background: none; font-size: 11pt; font-weight: 650; line-height: 1.2; color: var(--cv-title); break-after: avoid; }
+  .cv-document h2 .doc-section-icon { display: block; width: 3.6mm; height: 3.6mm; }
+  .cv-document h2::after { display: none; }
+  .doc-job { display: block; break-inside: avoid; }
+  .doc-job + .doc-job { margin-top: 4mm; padding: 0; border: 0; }
+  .doc-job-meta { display: block; position: static; }
+  .doc-job-meta > div { display: grid; grid-template-columns: 1fr auto; column-gap: 5mm; }
+  .cv-document .doc-job-meta h3 { grid-column: 1; font-size: 10.5pt; font-weight: 650; line-height: 1.3; letter-spacing: normal; color: var(--cv-title); }
+  .doc-job-role { grid-column: 1; margin-top: 0.3mm; font-size: 9.5pt; }
+  .doc-when { grid-column: 2; grid-row: 1 / span 2; margin: 0; font-size: 9pt; text-align: right; line-height: 1.45; }
+  .doc-where { display: block; }
+  .doc-points { max-width: none; margin: 2mm 0 0; padding-left: 3.5mm; list-style: disc; }
+  .doc-points li { padding: 0; font-size: 10pt; line-height: 1.4; letter-spacing: normal; break-inside: avoid; orphans: 2; widows: 2; }
+  .doc-points li + li { margin-top: 1.1mm; }
+  .doc-points li::before { display: none; }
+  .doc-points li::marker { font-size: 0.7em; color: var(--accent); }
+  .doc-highlight { padding: 0; border-radius: 0; background: none !important; color: var(--cv-emphasis); font-weight: 600; }
+
+  .doc-projects { display: block; }
+  .cv-document .doc-project { display: block; }
+  .doc-project + .doc-project { margin-top: 3mm; }
+  .doc-project-title { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; }
+  .cv-document .doc-project-title h3 { font-size: 10.5pt; font-weight: 650; line-height: 1.3; letter-spacing: normal; color: var(--cv-title); }
+  .doc-project-links { display: flex; flex-wrap: wrap; gap: 1mm 3mm; }
+  .cv-document .doc-project-link { display: inline-flex; align-items: center; gap: 0.8mm; font-size: 8.5pt; line-height: 1.4; color: var(--accent); }
+  .doc-project-link .cv-icon { width: 2.6mm; height: 2.6mm; }
+  .doc-project-detail { margin-top: 0.8mm; font-size: 10pt; line-height: 1.4; }
+  .doc-tags { display: block; margin: 0; padding: 0; line-height: 1.4; }
+  .doc-tags li { display: inline; padding: 0; border-radius: 0; background: none; font-size: 9pt; line-height: inherit; color: var(--ink-2); }
+  .doc-tags li:not(:last-child)::after { content: ", "; }
+  .doc-project .doc-tags { margin-top: 0.7mm; }
+
+  .doc-span { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5mm 6mm; }
+  .doc-span-step { display: block; padding: 0; }
+  .cv-document .doc-span-step h3 { display: inline; font-size: 9pt; font-weight: 600; line-height: 1.4; }
+  .cv-document .doc-span-step h3::after { content: ": "; }
+  .doc-span-step .doc-tags { display: inline; }
+  .doc-span-step:last-child { grid-column: 1 / -1; }
+  .doc-pair { gap: 7mm; margin-top: 3mm; padding-top: 1.5mm; border-top: 0.5pt solid var(--line); }
+  .doc-pair h2 { margin-bottom: 1mm; }
+  .doc-credential { display: block; }
+  .cv-document .doc-credential h3 { letter-spacing: -0.015em; font-size: 9.5pt; font-weight: 600; line-height: 1.4; }
+  .doc-credential-meta { margin-top: 0.8mm; font-size: 9pt; line-height: 1.4; }
+  .doc-span-step, .doc-project, .doc-pair { break-inside: avoid; }
+}

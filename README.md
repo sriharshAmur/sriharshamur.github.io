@@ -20,6 +20,9 @@ Edit `src/data/site.ts` for the profile, experience, education, skills and proje
 case studies. Home and `/cv` share this content. The personal introduction and
 career milestones live in `src/components/About.astro` and `Path.astro`.
 `/cv` includes a browser print / Save as PDF action with an A4 stylesheet.
+The website uses screen-only `src/styles/cv.css`. Printing renders a separate
+`src/components/CvDocument.astro` with its own `src/styles/cv-document.css`,
+class names and colour tokens, so web layout changes cannot leak into the PDF.
 
 The CV pairs employer details with outcome-led achievement bullets and selective
 bold emphasis. Its focused skills, projects and speaking selection live in the

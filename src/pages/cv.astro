@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
+import CvDocument from "../components/CvDocument.astro";
 import CompanyLogo from "../components/CompanyLogo.astro";
 import CvHighlight from "../components/CvHighlight.astro";
 import CvTechnologies from "../components/CvTechnologies.astro";
@@ -37,7 +38,7 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
           <Image src={portrait} alt={`Portrait of ${profile.name}`} width={460} format="webp" loading="eager" />
         </div>
         <h1 data-reveal style="--i:0"><a href="https://sriharsh.com/">{profile.name}</a></h1>
-        <p class="cv-lede" data-reveal style="--i:1"><span class="cv-web-copy">{cv.lede}</span><span class="cv-print-copy">{cv.printSummary}</span></p>
+        <p class="cv-lede" data-reveal style="--i:1">{cv.lede}</p>
         <p class="cv-role" data-reveal style="--i:2">{profile.role}<span class="cv-place"><CvIcon name="location" />{profile.location}</span></p>
         <ul class="cv-contact" role="list" data-reveal style="--i:3">
           {contacts.map((item) => (
@@ -51,7 +52,7 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
       </header>
 
       <section class="cv-section cv-experience" aria-labelledby="experience-title">
-        <h2 id="experience-title"><CvIcon name="experience" class="cv-section-icon" />Experience</h2>
+        <h2 id="experience-title">Experience</h2>
         {experience.map((role) => (
           <div class="job" data-reveal>
             <div class="job-meta">
@@ -66,41 +67,15 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
                 </p>
               </div>
             </div>
-            <ul class="points cv-web-copy">
+            <ul class="points">
               {role.points.map((point) => <li><CvHighlight text={point.text} highlight={point.highlight} /></li>)}
-            </ul>
-            <ul class="points cv-print-copy">
-              {cv.printExperience[role.logo].map((point) => <li><CvHighlight text={point.text} highlight={"highlight" in point ? point.highlight : undefined} /></li>)}
             </ul>
           </div>
         ))}
       </section>
 
-      <section class="cv-section cv-projects" aria-labelledby="projects-title">
-        <h2 id="projects-title"><CvIcon name="projects" class="cv-section-icon" />Projects</h2>
-        <div class="projects">
-          {selectedProjects.map((project, i) => (
-            <article class="project" data-reveal style={`--i:${i * 2}`}>
-              <a class="project-shot" href={project.href} aria-label={`Open ${project.title}`}><Image src={project.cover.src} alt="" width={800} format="webp" /></a>
-              <div class="project-body">
-                <div class="project-title">
-                  <h3><a href={project.href}>{project.title}</a></h3>
-                  <div class="project-links">
-                    <a class="project-link" href={project.href}><span class="cv-web-copy">{project.href.replace(/^https?:\/\//, "").replace(/\/$/, "")}</span><span class="cv-print-copy">Live app</span><CvIcon name="external" /></a>
-                    {project.sourceLink && <a class="project-link" href={project.sourceLink.href}>GitHub<CvIcon name="github" /></a>}
-                    <a class="project-link project-case-study" href={`https://sriharsh.com/work/${project.slug}/`}>Case study<CvIcon name="external" /></a>
-                  </div>
-                </div>
-                <p class="project-detail"><span class="cv-web-copy">{project.detail}</span><span class="cv-print-copy">{project.printDetail}</span></p>
-                <CvTechnologies tools={project.stack} />
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
       <section class="cv-section cv-skills" aria-labelledby="skills-title">
-        <h2 id="skills-title"><CvIcon name="skills" class="cv-section-icon" />Skills</h2>
+        <h2 id="skills-title">Skills</h2>
         <ol class="span" role="list" data-stretch>
           {cv.skills.map((skill, i) => (
             <li class="span-step" data-reveal style={`--i:${i * 2 + 2}`}>
@@ -113,9 +88,32 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
         </ol>
       </section>
 
+      <section class="cv-section cv-projects" aria-labelledby="projects-title">
+        <h2 id="projects-title">Projects</h2>
+        <div class="projects">
+          {selectedProjects.map((project, i) => (
+            <article class="project" data-reveal style={`--i:${i * 2}`}>
+              <a class="project-shot" href={project.href} aria-label={`Open ${project.title}`}><Image src={project.cover.src} alt="" width={800} format="webp" /></a>
+              <div class="project-body">
+                <div class="project-title">
+                  <h3><a href={project.href}>{project.title}</a></h3>
+                  <div class="project-links">
+                    <a class="project-link" href={project.href}>{project.href.replace(/^https?:\/\//, "").replace(/\/$/, "")}<CvIcon name="external" /></a>
+                    {project.sourceLink && <a class="project-link" href={project.sourceLink.href}>GitHub<CvIcon name="github" /></a>}
+                    <a class="project-link project-case-study" href={`https://sriharsh.com/work/${project.slug}/`}>Case study<CvIcon name="external" /></a>
+                  </div>
+                </div>
+                <p class="project-detail">{project.detail}</p>
+                <CvTechnologies tools={project.stack} />
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <div class="cv-section cv-pair" data-reveal>
         <section aria-labelledby="speaking-title">
-          <h2 id="speaking-title"><CvIcon name="speaking" class="cv-section-icon" />Speaking</h2>
+          <h2 id="speaking-title">Speaking</h2>
           <div class="credential">
             <span class="credential-icon"><CvIcon name="speaking" /></span>
             <div>
@@ -126,7 +124,7 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
           </div>
         </section>
         <section aria-labelledby="education-title">
-          <h2 id="education-title"><CvIcon name="education" class="cv-section-icon" />Education</h2>
+          <h2 id="education-title">Education</h2>
           <div class="credential">
             <span class="credential-icon"><CvIcon name="education" /></span>
             <div>
@@ -139,4 +137,5 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
       </div>
     </article>
   </div>
+  <CvDocument projects={selectedProjects} />
 </Base>

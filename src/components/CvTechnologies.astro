@@ -1,9 +1,9 @@
 ---
 import { technologyLinks } from "../data/cv-links";
-interface Props { tools: string[]; }
-const { tools } = Astro.props;
+interface Props { tools: string[]; class?: string; }
+const { tools, class: className = "tags" } = Astro.props;
 ---
-<ul class="tags" role="list">
+<ul class={className} role="list">
   {tools.map((tool) => (
     <li>{technologyLinks[tool] ? <a href={technologyLinks[tool]}>{tool}</a> : tool}</li>
   ))}

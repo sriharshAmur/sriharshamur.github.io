@@ -1,3 +1,5 @@
+/* Website styling never participates in PDF rendering. */
+@media screen {
 /* The CV is read, not scanned past. What Sri Harsh did is the brightest,
    largest text on the page; companies, roles and dates sit beside it as a
    sticky index. Skills read as one span, design to production. Colour comes
@@ -14,8 +16,6 @@ body[data-page="cv"] { font-family: var(--sans); background: var(--paper); }
   color: var(--ink);
 }
 .cv a { text-decoration: none; }
-.cv-print-copy { display: none; }
-.cv-section-icon { display: none; }
 .cv a:hover { color: var(--accent); }
 .cv h1, .cv h2, .cv h3 { text-wrap: balance; color: var(--ink); }
 .cv-icon { width: 1.05em; height: 1.05em; flex: none; }
@@ -233,7 +233,7 @@ body[data-page="cv"] { font-family: var(--sans); background: var(--paper); }
 }
 
 /* Projects: the work itself, shown. ------------------------------------- */
-.projects { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
+.projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem; }
 .cv .project { display: grid; align-content: start; gap: 1.4rem; color: inherit; }
 .project-shot {
   overflow: hidden;
@@ -291,7 +291,6 @@ body[data-page="cv"] { font-family: var(--sans); background: var(--paper); }
 }
 
 @media screen and (max-width: 1100px) {
-  .projects { grid-template-columns: 1fr; }
   .span { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 2.5rem; }
   .span::before { display: none; }
 }
@@ -320,89 +319,9 @@ body[data-page="cv"] { font-family: var(--sans); background: var(--paper); }
   .projects, .cv-pair { grid-template-columns: 1fr; }
 }
 
-/* A one-page document, edited for a recruiter rather than a web viewport. */
-@media print {
-  @page { size: A4; margin: 11mm 15mm; }
-  :root:has(body[data-page="cv"]), :root.dark:has(body[data-page="cv"]) {
-    --paper: #fff; --paper-2: #fff; --surface: #fff;
-    --ink: #233c57; --ink-2: #365779; --ink-3: #46617e;
-    --line: #b9cadb; --accent: #155fa6; --accent-soft: transparent;
-    --cv-title: #134d86; --cv-emphasis: #155fa6;
-    font-size: 10pt;
-    color-scheme: light;
-  }
-  body[data-page="cv"] { background: #fff; }
-  body[data-page="cv"] .nav, body[data-page="cv"] .skip, .cv-print, .cv-portrait,
-  .company-logo, .project-shot, .span-icon, .credential-icon, .now, .cv-web-copy { display: none !important; }
-  .cv-icon { display: inline-block; width: 3mm; height: 3mm; color: var(--accent); }
-  .cv-print-copy { display: block; }
-  span.cv-print-copy { display: inline; }
-  .cv { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .cv *, .cv *::before, .cv *::after { animation: none !important; transition: none !important; }
-  .cv [data-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
-  .cv-shell { width: 100%; margin: 0; font-size: 10pt; line-height: 1.4; }
-  .cv h1, .cv h2, .cv h3 { font-family: var(--sans); text-wrap: auto; letter-spacing: normal; color: var(--ink); }
-  .cv a { color: inherit; text-decoration: none; }
-  .cv-head { display: grid; grid-template-columns: minmax(0, 1fr) 64mm; column-gap: 5mm; padding: 1.5mm 0; background: none; border-bottom: 1pt solid var(--accent); align-items: start; }
-  .cv h1 { grid-row: 1; font-size: 28pt; font-weight: 650; line-height: 1.1; letter-spacing: -0.035em; color: var(--cv-title); }
-  .cv-role { grid-row: 2; margin-top: 1.5mm; gap: 1mm 3mm; font-size: 11pt; font-weight: 500; color: var(--ink); }
-  .cv-place { font-size: 9pt; font-weight: 400; gap: 1mm; }
-  .cv .cv-head > .cv-contact { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
-  .cv-contact { display: flex; flex-wrap: wrap; justify-content: flex-end; margin: 0; font-size: 9pt; gap: 1.5mm 4mm; }
-  .cv-contact a { display: inline-flex; align-items: center; gap: 1.2mm; color: var(--accent); }
-  .cv-contact .cv-icon { color: var(--accent); }
-  .cv-place .cv-icon { color: var(--accent); }
-  .print-url { display: none; }
-  .cv .cv-head > .cv-lede { grid-column: 1 / -1; grid-row: 3; margin-top: 3mm; max-width: none; font-size: 10pt; line-height: 1.4; letter-spacing: normal; text-wrap: auto; }
-  .cv-section { margin-top: 4.25mm; }
-  .cv h2 { display: flex; align-items: center; gap: 1.8mm; margin-bottom: 2mm; padding: 0.3mm 0; border: 0; background: none; font-size: 11pt; font-weight: 650; line-height: 1.2; color: var(--cv-title); break-after: avoid; }
-  .cv h2 .cv-section-icon { display: block; width: 3.6mm; height: 3.6mm; }
-  .cv h2::after { display: none; }
-  .job { display: block; break-inside: avoid; }
-  .job + .job { margin-top: 4mm; padding: 0; border: 0; }
-  .job-meta { display: block; position: static; }
-  .job-meta > div { display: grid; grid-template-columns: 1fr auto; column-gap: 5mm; }
-  .cv .job-meta h3 { grid-column: 1; font-size: 10.5pt; font-weight: 650; line-height: 1.3; letter-spacing: normal; color: var(--cv-title); }
-  .job-role { grid-column: 1; margin-top: 0.3mm; font-size: 9.5pt; }
-  .when { grid-column: 2; grid-row: 1 / span 2; margin: 0; font-size: 9pt; text-align: right; line-height: 1.45; }
-  .where { display: block; }
-  .points { max-width: none; margin: 2mm 0 0; padding-left: 3.5mm; list-style: disc; }
-  .points li { padding: 0; font-size: 10pt; line-height: 1.4; letter-spacing: normal; break-inside: avoid; orphans: 2; widows: 2; }
-  .points li + li { margin-top: 1.1mm; }
-  .points li::before { display: none; }
-  .points li::marker { font-size: 0.7em; color: var(--accent); }
-  .cv-highlight { padding: 0; border-radius: 0; background: none !important; color: var(--cv-emphasis); font-weight: 600; }
-
-  .projects { display: block; }
-  .cv .project { display: block; }
-  .project + .project { margin-top: 3mm; }
-  .project-title { display: flex; justify-content: space-between; align-items: baseline; gap: 3mm; }
-  .cv .project-title h3 { font-size: 10.5pt; font-weight: 650; line-height: 1.3; letter-spacing: normal; color: var(--cv-title); }
-  .project-links { display: flex; flex-wrap: wrap; gap: 1mm 3mm; }
-  .cv .project-link { display: inline-flex; align-items: center; gap: 0.8mm; font-size: 8.5pt; line-height: 1.4; color: var(--accent); }
-  .project-link .cv-icon { width: 2.6mm; height: 2.6mm; }
-  .project-detail { margin-top: 0.8mm; font-size: 10pt; line-height: 1.4; }
-  .tags { display: block; margin: 0; padding: 0; line-height: 1.4; }
-  .tags li { display: inline; padding: 0; border-radius: 0; background: none; font-size: 9pt; line-height: inherit; color: var(--ink-2); }
-  .tags li:not(:last-child)::after { content: ", "; }
-  .project .tags { margin-top: 0.7mm; }
-
-  .span { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5mm 6mm; }
-  .span::before, .span-line { display: none; }
-  .span-step { display: block; padding: 0; }
-  .cv .span-step h3 { display: inline; font-size: 9pt; font-weight: 600; line-height: 1.4; }
-  .cv .span-step h3::after { content: ": "; }
-  .span-step .tags { display: inline; }
-  .span-step:last-child { grid-column: 1 / -1; }
-  .cv-pair { gap: 7mm; margin-top: 3mm; padding-top: 1.5mm; border-top: 0.5pt solid var(--line); }
-  .cv-pair h2 { margin-bottom: 1mm; }
-  .credential { display: block; }
-  .cv .credential h3 { font-size: 9.5pt; font-weight: 600; line-height: 1.4; }
-  .credential-meta { margin-top: 0.8mm; font-size: 9pt; line-height: 1.4; }
-  .credential-detail { display: none; }
-  .span-step, .project, .cv-pair { break-inside: avoid; }
-}
 @media (prefers-reduced-motion: reduce) {
   .cv-print, .project-shot img, .span-icon { transition: none; }
   .now::before { animation: none; }
+}
+
 }
