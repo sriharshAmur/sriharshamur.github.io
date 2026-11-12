@@ -137,5 +137,5 @@ const contacts: { icon: CvIconName; label: string; href: string; print?: string 
       </div>
     </article>
   </div>
-  <CvDocument projects={selectedProjects} />
+  <CvDocument projects={selectedProjects.filter((_, i) => cv.projects[i].print !== false)} />
 </Base>
