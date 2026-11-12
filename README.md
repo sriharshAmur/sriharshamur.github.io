@@ -44,8 +44,9 @@ then projects, skills, speaking and education. Its concise summary, selected
 achievement bullets and project descriptions live alongside the full web copy in
 `src/data/site.ts` (`printSummary`, `printExperience` and `printDetail`). The website
 keeps the longer evidence; the PDF is edited for scanning rather than squeezed to
-fit with tiny type. Journal, Long Exposure and Munch are selected from the shared project
-data, including their actual app and public source links. Website logos,
+fit with tiny type. Vishwa's, Journal, Long Exposure and Munch are selected from the shared
+project data, including their actual app and public source links. The PDF
+leaves out projects marked `print: false` (Munch) to stay on one page. Website logos,
 screenshots, badges and animations are omitted from print; skills become concise
 technology lists. Employers, education, contact details, projects, case studies,
 public repositories and named technologies have clickable links. External

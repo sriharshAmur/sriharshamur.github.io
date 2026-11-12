@@ -186,6 +186,12 @@ export const cv = {
   ],
   projects: [
     {
+      slug: "vishwas",
+      detail: "A job-search assistant built for a friend racing a visa deadline, working the evening he asked. Twice a day it finds new jobs in the Netherlands, scores fit with Claude Haiku and writes a tailored CV and letter for each strong match, checked so they never invent facts. One tap applies, and only after a yes. It found about 3,200 jobs on its first day.",
+      printDetail: "Multi-user job-search assistant: finds Dutch jobs twice a day, scores fit with Claude Haiku, writes fact-checked CVs and letters, and applies after a one-tap yes. About 3,200 jobs found on day one.",
+      tools: ["TypeScript", "React", "Hono", "Cloudflare Workers", "D1", "Claude Haiku", "Telegram Bot API"],
+    },
+    {
       slug: "journal",
       detail: "Built a private journaling app with Google sign-in, searchable entries and AI reflections grounded in the writer’s own words. Runs on Cloudflare Workers with D1 and R2; a separate browser-only demo uses fictional data.",
       printDetail: "Private journaling with Google sign-in, searchable entries and AI reflections grounded in the writer’s own words. Built on Cloudflare Workers, D1 and R2.",
@@ -199,6 +205,8 @@ export const cv = {
     },
     {
       slug: "munch",
+      // The one-page PDF keeps the three most relevant projects; Munch stays on the web CV.
+      print: false,
       detail: "Plays a year of food-delivery orders back as stories, charts and a guess at your next order. One TypeScript core powers both the CLI and the web app.",
       printDetail: "Turns food-delivery history into stories, analysis and order predictions. One TypeScript core powers the CLI and React app.",
       tools: ["TypeScript", "Bun", "React"],

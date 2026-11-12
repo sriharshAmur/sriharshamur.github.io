@@ -37,4 +37,6 @@ export const technologyLinks: Record<string, string> = {
   "Better Auth": "https://www.better-auth.com/",
   D1: "https://developers.cloudflare.com/d1/",
   R2: "https://developers.cloudflare.com/r2/",
+  "Claude Haiku": "https://www.anthropic.com/claude/haiku",
+  "Telegram Bot API": "https://core.telegram.org/bots/api",
 };
