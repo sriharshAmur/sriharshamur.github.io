@@ -18,6 +18,11 @@ import journalExplore from "../assets/work/journal/explore.jpg";
 import journalJournal from "../assets/work/journal/journal.jpg";
 import journalMemory from "../assets/work/journal/memory.jpg";
 import journalLanding from "../assets/work/journal/landing.jpg";
+import vishwasHero from "../assets/work/vishwas/hero.jpg";
+import vishwasLanding from "../assets/work/vishwas/landing.jpg";
+import vishwasAsk from "../assets/work/vishwas/ask.jpg";
+import vishwasDeadline from "../assets/work/vishwas/deadline.jpg";
+import vishwasPhone from "../assets/work/vishwas/phone.jpg";
 
 export const profile = {
   name: "Sri Harsh Amur",
@@ -277,6 +282,44 @@ export type Work = {
 };
 
 export const work: Work[] = [
+  {
+    slug: "vishwas",
+    title: "Vishwa's",
+    kind: "Personal project",
+    year: "2026",
+    featured: true,
+    tagline: "Wake up to jobs that fit, with the applications already written.",
+    summary:
+      "A job-search assistant for the Netherlands. Twice a day it finds new jobs, scores how well each one fits, writes a tailored CV and motivation letter for the good ones, and asks on Telegram whether to apply. Nothing is sent without a yes.",
+    tools: ["TypeScript", "React 19", "TanStack Router", "Hono", "Better Auth", "Cloudflare Workers", "D1", "R2", "Claude Haiku", "Telegram Bot API"],
+    cover: {
+      type: "image",
+      src: vishwasHero,
+      alt: "Vishwa's Today page: four new jobs ranked by fit score, each with Apply and Skip, beside a weekly goal",
+    },
+    coverNote: "Screenshots show a made-up person and made-up employers, never a real job search.",
+    tint: "#0f1a3a",
+    links: [
+      { label: "Open Vishwa's", href: "https://vishwas.sriharsh.com/" },
+    ],
+    problem:
+      "My friend Vishwa, a mechanical engineer, had just finished his master's in the Netherlands and his post-study visa was running out. He was spending hours a day searching job boards and rewriting his CV and motivation letter for every application, and most of those hours went on work a computer could do. One afternoon he told me what he needed: find the jobs, tailor the documents, keep track of what he had sent. I offered to build it.",
+    approach: [
+      "Twice a day it searches company applicant-tracking feeds, careers pages, job boards and the web for new jobs in the Netherlands. Each person's filters drop what can't fit before any model is called; Claude Haiku scores the rest and says why.",
+      "For strong matches it writes a CV and motivation letter in the person's own voice. A quality check makes sure neither claims anything the profile doesn't say, then Browser Rendering turns them into polished PDFs.",
+      "Then it asks, on Telegram or in the web app. One tap applies: straight through Recruitee's API where an employer uses it, or as a Gmail draft the person sends themselves. Nothing goes out without a yes, and no setting turns that off.",
+      "Around that sits what a job search actually needs: a document studio with versions, an assistant on every page that can change settings and improve a letter, company pages with research and visa-sponsor status from the IND's register, and application tracking with follow-up reminders.",
+      "One Cloudflare Worker runs the Hono API, the cron and the Queues, with D1 and R2 kept in the EU. Google sign-in, invites and an admin area make it work for many people rather than one; the React app installs as a PWA, and the public pages score about 95 on Lighthouse mobile.",
+    ],
+    outcome:
+      "He asked in the afternoon and had it that evening. His reply: “I needed this months ago.” On its first day in production it found about 3,200 jobs, scored 216 and delivered the best matches with their CVs and letters ready to send.",
+    gallery: [
+      { src: vishwasLanding, alt: "The public page: the headline “Wake up to jobs in the Netherlands that fit you” beside an example job scored 91, with its CV and letter and an Applied mark", caption: "The public page plays one made-up job from found to sent." },
+      { src: vishwasAsk, alt: "Two steps from the public page: a line from a CV beside the letter sentence written from it, and a Telegram message with Apply, Redo and Skip", caption: "Every claim in a letter has to be in the CV first, and the yes comes from your phone." },
+      { src: vishwasDeadline, alt: "A count of days left on the visa above a timeline, beside notes on recognised sponsors and jobs that ask for Dutch", caption: "Made for a search with a deadline: the visa counted in days, sponsors and Dutch-only jobs marked." },
+      { src: vishwasPhone, alt: "The Today page on a phone: ready jobs with fit scores, a visa sponsor badge and a large Apply button", caption: "On a phone, the best fit comes first and is one tap from applying." },
+    ],
+  },
   {
     slug: "journal",
     title: "Journal",
